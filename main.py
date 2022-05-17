@@ -180,10 +180,14 @@ class BasicParser(Parser):
 
     @_('FUNCION tipo ID funcs2')
     def funcs(self,p):
+        dir.agregarFunc(p[2])
+        dir.print
         return p
 
     @_('FUNCION ID funcs2')
     def funcs(self,p):
+        dir.agregarFunc(p[1])
+        dir.print
         return p
 
     @_('"(" param ")" funcs3')

@@ -1,3 +1,6 @@
+from inspect import _void
+
+
 class fundir(object):
 
 
@@ -30,6 +33,22 @@ class fundir(object):
         else:
             print("test")
             self.funDir[self.currentScope][1][id] = [self.currentType,"valor"]
+
+   
+    def agregarFunc(self, id):
+        self.currentScope = ""
+        self.currentScopeReturn = ""
+        self.currentType = "void"
+        if id in self.funDir: #ya esta la func en la tabla
+            print("error the function has already been decalred")
+        else:
+            self.programName = id
+            print(self.programName)
+            self.funDir[id] = ["void", dict()]
+            self.currentScope = id
+            self.print
+
+
 
     def print(self):
         print(self.funDir)
