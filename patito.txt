@@ -1,0 +1,27 @@
+programa covid19;
+
+var 
+    int i,j,p,maxVariables,maxRenglones;
+    int valor, Arreglo[10], OtroArreglo[10];
+    dataframe DatosCovid;
+    string VarCovid[100];
+
+funcion int fact(int j)
+var int i;
+{
+    i = j + (p-j*2+j);
+    si(j == 1) entonces{
+        regresa(j);
+    }sino{
+        regresa(j);
+        fact(j-1);
+    }
+}
+
+
+
+principal(){
+    lee(p);
+    j = p*2;
+
+}
