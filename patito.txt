@@ -6,7 +6,7 @@ var
     dataframe DatosCovid;
     string VarCovid[100];
 
-funcion int fact(int j)
+funcion int fact(int j, string k)
 var int i;
 {
     i = j + (p-j*2+j);
@@ -14,7 +14,6 @@ var int i;
         regresa(j);
     }sino{
         regresa(j);
-        fact(j-1);
     }
 }
 

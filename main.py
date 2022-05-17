@@ -77,17 +77,21 @@ class BasicParser(Parser):
         ('left','*','/'),
     )
 
-    @_('PROGRAMA ID programa')
+    @_('catcherprograma ";" programa')
     def preprograma(self,p):
-        dir.addProgram(p[1])
-        dir.print()
-        return printTest()
+        return p
 
-    @_('";" programa2 PRINCIPAL "(" ")" bloque fin')
+    @_("PROGRAMA ID")
+    def catcherprograma(self,p):
+        dir.addProgram(p[1])
+        #dir.print()
+        return p
+
+    @_(' programa2 PRINCIPAL "(" ")" bloque fin')
     def programa(self,p):
         return p
 
-    @_('";" PRINCIPAL "(" ")" bloque fin')
+    @_(' PRINCIPAL "(" ")" bloque fin')
     def programa(self,p):
         return p
 
@@ -107,8 +111,13 @@ class BasicParser(Parser):
     def programa3(self,p):
         return p
 
-    @_('VAR var2')
+    @_('varshelper var2')
     def vars(self,p):
+        #dir.checarTablaScope()
+        return p
+
+    @_('VAR')
+    def varshelper(self,p):
         dir.checarTablaScope()
         return p
 
@@ -128,41 +137,48 @@ class BasicParser(Parser):
     def var3(self,p):
         return p
 
-    @_('ID "," var3')
+    @_('varhelp var3')
     def var3(self,p):
-       # dir.agregarVariable(p[0])
-        dir.print()
         return p
 
-    @_('ID')
+    @_('varhelp')
     def var3(self,p):
-        #dir.agregarVariable(p[0])
-        dir.print()
+        return p
+
+    @_('ID ","')
+    def varhelp(self,p):
+        dir.agregarVariable(p[0])
+        #dir.print()
+
+    @_('ID')
+    def varhelp(self,p):
+        dir.agregarVariable(p[0])
+        #dir.print()
         return p
 
     @_('INT')
     def tipo(self,p):
-        dir.currentType = "int"
+        dir.settype("int")
         return p
 
     @_('FLOAT')
     def tipo(self,p):
-        dir.currentType = "float"
+        dir.settype("float")
         return p
 
     @_('STRING')
     def tipo(self,p):
-        dir.currentType = "string"
+        dir.settype("string")
         return p
 
     @_('CHAR')
     def tipo(self,p):
-        dir.currentType = "char"
+        dir.settype("char")
         return p
 
     @_('DATAFRAME')
     def tipo(self,p):
-        dir.currentType = "dataframe"
+        dir.settype("dataframe")
         return p
 
     @_('VOID')#########################################################
@@ -170,25 +186,38 @@ class BasicParser(Parser):
         dir.currentType = "void"
         return p
 
-    @_('tipo ID "," param')
+    @_('paramhelp "," param')
+    def param(self,p):
+        return p
+
+    @_('paramhelp')
     def param(self,p):
         return p
 
     @_('tipo ID')
-    def param(self,p):
+    def paramhelp(self,p):
+        dir.agregarVariable(p[1])
         return p
 
-    @_('FUNCION tipo ID funcs2')
+    @_('funcshelper funcs2')
     def funcs(self,p):
-        dir.agregarFunc(p[2])
-        dir.print
+        #dir.agregarFunc(p[2])
+        #dir.print
         return p
 
-    @_('FUNCION ID funcs2')
+    @_('FUNCION tipo ID')
+    def funcshelper(self,p):
+        dir.setscope(p[2])
+        dir.setreturn(dir.currentType)
+        dir.agregarFunc(p[2])
+
+    '''
+    @_('FUNCION ID funcs2')##no recuerdo para que pusimos esto
     def funcs(self,p):
         dir.agregarFunc(p[1])
         dir.print
         return p
+    '''
 
     @_('"(" param ")" funcs3')
     def funcs2(self,p):
@@ -421,6 +450,7 @@ class BasicParser(Parser):
     @_('')
     def fin(self,p):
         print("codigo valido")
+        dir.print()
         dir.borrar()
         return p
 

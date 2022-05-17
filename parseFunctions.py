@@ -18,6 +18,16 @@ class fundir(object):
         self.currentScope = "global"
         self.print()
 
+    def settype(self,type):
+        self.currentType = type
+
+    def setscope(self,scope):
+        
+        self.currentScope = scope
+
+    def setreturn(self, regresa):
+        self.currentScopeReturn = regresa
+
     def borrar(self):#aqui se borra todo
         self.funDir = dict()
 
@@ -28,25 +38,21 @@ class fundir(object):
             self.funDir[self.currentScope] = [self.currentScopeReturn,dict()]
 
     def agregarVariable(self, id):
-        if id in self.funDir[self.currentScope][2]:#ya esta el id en la tabla
+        if id in self.funDir[self.currentScope][1]:#ya esta el id en la tabla
             print("error the id is already being used")
         else:
-            print("test")
             self.funDir[self.currentScope][1][id] = [self.currentType,"valor"]
 
    
     def agregarFunc(self, id):
-        self.currentScope = ""
-        self.currentScopeReturn = ""
-        self.currentType = "void"
+        #self.currentScope = ""
+        #self.currentScopeReturn = ""
+        #self.currentType = "void"
         if id in self.funDir: #ya esta la func en la tabla
             print("error the function has already been decalred")
         else:
-            self.programName = id
-            print(self.programName)
-            self.funDir[id] = ["void", dict()]
-            self.currentScope = id
-            self.print
+            self.funDir[id] = [self.currentScopeReturn, dict()]
+            self.print()
 
 
 
