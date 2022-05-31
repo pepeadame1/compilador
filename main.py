@@ -3,6 +3,7 @@ from sly import Parser
 from parseFunctions import *
 
 dir = fundir()
+qm = quadrupleManager()
 
 class BasicLexer(Lexer):
 
@@ -451,6 +452,12 @@ class BasicParser(Parser):
     def fin(self,p):
         print("codigo valido")
         dir.print()
+        #dir.test()
+
+        #area de tests
+        qm.verificarTiposOp("+",("int","float"))
+
+
         dir.borrar()
         return p
 

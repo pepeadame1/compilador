@@ -1,5 +1,6 @@
 from inspect import _void
 
+#todas las funciones tienen que tener self como parametro
 
 class fundir(object):
 
@@ -59,8 +60,6 @@ class fundir(object):
     def print(self):
         print(self.funDir)
 
-    def test():
-        print("test")
 
 class printTest:
     def __init__(self):
@@ -86,4 +85,10 @@ class quadrupleManager(object):
         '!':{('bool'):'bool'}
         }
 
-        
+    def verificarTiposOp(self,op,dupla):#verifica si una operacion se encuentra en el cubo semantico
+        if op in self.cubosemantico:
+            print("operacion valida, falta verificar tipos")
+            if dupla in self.cubosemantico[op]:
+                print("tipos validos")
+                return True
+        return False
