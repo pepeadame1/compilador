@@ -1,4 +1,6 @@
 from inspect import _void
+from textwrap import indent
+import json
 
 #todas las funciones tienen que tener self como parametro
 
@@ -58,7 +60,7 @@ class fundir(object):
 
 
     def print(self):
-        print(self.funDir)
+        print(json.dumps(self.funDir,indent=2))
 
 
 class printTest:
