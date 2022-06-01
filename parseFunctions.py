@@ -63,7 +63,14 @@ class fundir(object):
             return self.funDir[self.currentScope][1][name][0]
         elif name in self.funDir["global"][1]:
             return self.funDir["global"][1][name][0]
-        
+    
+    def vairableExists(self,id):
+        if id in self.funDir[self.currentScope][1]:
+            return True
+        elif id in self.funDir["global"][1]:
+            return True
+        else:
+            return False
 
     def print(self):
         print(json.dumps(self.funDir,indent=2))
@@ -82,6 +89,7 @@ class quadrupleManager(object):
         self.avail = []#pila para los resultados temporales
         self.quadruplos = []#pila de quadruplos
         self.resultI = 0 #para tener el index de t1,t2
+        self.pSaltos = []#pila de saltos
 
         self.cubosemantico = {'=':{('int','int'): 'int',('float','float'): 'float', ('char','char'):'char'},
         '-':{('int','int'): 'int', ('float','float'):'float',('int','float'): 'float', ('float','int'):'float'},

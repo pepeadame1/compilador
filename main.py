@@ -328,33 +328,53 @@ class BasicParser(Parser):
     def lectura(self,p):
         return p
 
-    @_('ID ")"')
+    @_('lectura3 ")"')
     def lectura2(self,p):
         return p
 
-    @_('ID "," lectura2')
+    @_('lectura3 "," lectura2')
     def lectura2(self,p):
+        return p
+
+    @_('ID')
+    def lectura3(self,p):#aqui se agrega el quadruplo de lectura
+        if dir.vairableExists(p[0]):#verificar que exista el id
+            qm.pushQuadruple('LEE',"","",p[0])
         return p
 
     @_('ESCRIBE "(" escritura2')
     def escritura(self,p):
         return p
 
-    @_('expresion ")" ";"')
+    @_('escritura3 ")" ";"')
     def escritura2(self,p):
         return p
 
-    @_('expresion "," escritura2')
+    @_('escritura3 "," escritura2')
     def escritura2(self,p):
         return p
 
-    @_('CTESTRING ")" ";"')
+    @_('escritura4 ")" ";"')
     def escritura2(self,p):
         return p
 
-    @_('CTESTRING "," escritura2')
+    @_('escritura4 "," escritura2')
     def escritura2(self,p):
         return p
+
+    @_('expresion')
+    def escritura3(self,p):#se crea el cuadruplo para escribir una expresion
+        
+        exp = qm.popPilaO()
+        tipo = qm.popPilaT()
+
+        print(qm.popPilaT())
+        qm.pushQuadruple("ESCRIBE","","",exp)
+        return p
+
+    @_('CTESTRING')
+    def escritura4(self,p):#se crea el cuadruplo para escribir un string
+        qm.pushQuadruple("ESCRIBE","","",p[0])
 
     @_('CARGAARCHIVO "(" ID "," RUTA "," INT "," INT ")" ";"')
     def cargadatos(self,p):

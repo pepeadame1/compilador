@@ -20,6 +20,8 @@ var int i;
 
 principal(){
     lee(p);
+    escribe(p);
+    escribe("Pene");
     j = p*2;
 
 }
