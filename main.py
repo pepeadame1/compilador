@@ -419,13 +419,18 @@ class BasicParser(Parser):
 
     @_('decision1 ENTONCES bloque decision2 SINO bloque')
     def decision(self,p):
+        end =qm.popPSaltos()
+        cont = qm.quadCount()
+        print(end)
+        print(cont)
+        qm.fill(end,cont)
         return p
 
     @_('decision1 ENTONCES bloque')
     def decision(self,p):
-        
         end = qm.popPSaltos()
         cont = qm.quadCount()
+        
         qm.fill(end,cont)
         return p
 
@@ -439,19 +444,23 @@ class BasicParser(Parser):
         if tipo != "bool":
             print("type mismatch")
         else:
-            exp = qm.popAvail()
+            exp = qm.popPilaO()
             qm.pushQuadruple("GotoF",exp,"","")
             cont = qm.quadCount()
-            qm.pushPSaltos(cont - 1)
+            qm.pushPSaltos(cont-1)
         print("end iffffff")
         return p
     
     @_('')
     def decision2(self,p):
         qm.pushQuadruple("GOTO","","","_")
+        
         false = qm.popPSaltos()
+        cont = qm.quadCount()
         qm.pushPSaltos(cont - 1)
-        cont = qm.quadCount
+        print('falseEeeeeeee')
+        print(false)
+        print(cont)
         qm.fill(false,cont)
         return p
 

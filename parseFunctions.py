@@ -166,9 +166,13 @@ class quadrupleManager(object):
         self.resultI = self.resultI+1
 
     def quadCount(self):
+        print("quad count:_-----")
+        print(len(self.quadruplos))
         return len(self.quadruplos)
     
     def fill(self,end,cont):
+        print("este es el cuaruplo que se esta modificando:")
+        print(self.quadruplos[end])
         self.quadruplos[end][3] = cont
         print(self.quadruplos[end])
 
