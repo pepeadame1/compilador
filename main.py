@@ -417,7 +417,7 @@ class BasicParser(Parser):
             print("type mismatch")
         return p
 
-    @_('decision1 ENTONCES bloque SINO bloque')
+    @_('decision1 ENTONCES bloque decision2 SINO bloque')
     def decision(self,p):
         return p
 
@@ -445,6 +445,16 @@ class BasicParser(Parser):
             qm.pushPSaltos(cont - 1)
         print("end iffffff")
         return p
+    
+    @_('')
+    def decision2(self,p):
+        qm.pushQuadruple("GOTO","","","_")
+        false = qm.popPSaltos()
+        qm.pushPSaltos(cont - 1)
+        cont = qm.quadCount
+        qm.fill(false,cont)
+        return p
+
 
     @_('MIENTRAS condicional1 "(" expresion ")" condicional2 HAZ bloque condicional3')
     def condicional(self,p):
