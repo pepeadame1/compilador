@@ -23,7 +23,9 @@ principal(){
     escribe(p);
     escribe("Pene");
 
-    
+    mientras(i > 0) haz {
+        escribe("test");
+    }
 
     j = p*2;
 

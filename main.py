@@ -390,10 +390,71 @@ class BasicParser(Parser):
 
     @_('"<" exp')
     def expresion2(self,p):
+        rightO = qm.popPilaO()
+        rightT = qm.popPilaT()
+        leftO = qm.popPilaO()
+        leftT = qm.popPilaT()
+        if qm.verificarTiposOp('<',(rightT,leftT)):#si es valido
+            resultT = qm.regresaTipoCuboSemantico('<',(rightT,leftT))
+            qm.pushAvail(qm.resultCounter())
+            qm.pushQuadruple('<',leftO,rightO,qm.resultCounter())
+            qm.pushPilaO(qm.resultCounter())
+            qm.pushPilaT(resultT)
+            qm.resultAdd()
+        else:
+            print("type mismatch")
+        return p
+
+    @_('">" "=" exp')
+    def expresion2(self,p):
+        print("asoenhtaoetuaotnsuhaoehu")
+        rightO = qm.popPilaO()
+        rightT = qm.popPilaT()
+        leftO = qm.popPilaO()
+        leftT = qm.popPilaT()
+        if qm.verificarTiposOp('>=',(rightT,leftT)):#si es valido
+            resultT = qm.regresaTipoCuboSemantico('>=',(rightT,leftT))
+            qm.pushAvail(qm.resultCounter())
+            qm.pushQuadruple('>=',leftO,rightO,qm.resultCounter())
+            qm.pushPilaO(qm.resultCounter())
+            qm.pushPilaT(resultT)
+            qm.resultAdd()
+        else:
+            print("type mismatch")
+        return p
+
+    @_('"<" "=" exp')
+    def expresion2(self,p):
+        rightO = qm.popPilaO()
+        rightT = qm.popPilaT()
+        leftO = qm.popPilaO()
+        leftT = qm.popPilaT()
+        if qm.verificarTiposOp('<=',(rightT,leftT)):#si es valido
+            resultT = qm.regresaTipoCuboSemantico('<=',(rightT,leftT))
+            qm.pushAvail(qm.resultCounter())
+            qm.pushQuadruple('<=',leftO,rightO,qm.resultCounter())
+            qm.pushPilaO(qm.resultCounter())
+            qm.pushPilaT(resultT)
+            qm.resultAdd()
+        else:
+            print("type mismatch")
         return p
 
     @_('">" exp')
     def expresion2(self,p):
+        rightO = qm.popPilaO()
+        rightT = qm.popPilaT()
+        leftO = qm.popPilaO()
+        leftT = qm.popPilaT()
+        if qm.verificarTiposOp('>',(rightT,leftT)):#si es valido
+            resultT = qm.regresaTipoCuboSemantico('>',(rightT,leftT))
+            qm.pushAvail(qm.resultCounter())
+            qm.pushQuadruple('>',leftO,rightO,qm.resultCounter())
+            qm.pushPilaO(qm.resultCounter())
+            qm.pushPilaT(resultT)
+            qm.resultAdd()
+        else:
+            print("type mismatch")
         return p
 
     @_('"<" ">" exp')
@@ -477,7 +538,7 @@ class BasicParser(Parser):
     @_('')
     def condicional2(self,p):
         expT = qm.popPilaT()
-        if expT == bool:
+        if expT == "bool":
             result = qm.popPilaO()
             qm.pushQuadruple("GotoF",result,"","")
             qm.pushPSaltos(qm.quadCount()-1)
@@ -503,8 +564,6 @@ class BasicParser(Parser):
 
     @_('')
     def validatipos1(self,p):
-        #print("validatipos")
-        print(qm.topPOper())
         if qm.topPOper() == '+' or qm.topPOper() == '-':
             rightO = qm.popPilaO()
             rightType = qm.popPilaT()
@@ -524,8 +583,6 @@ class BasicParser(Parser):
 
     @_('')
     def validatipos2(self,p):
-        
-        #print("validatipos")
         print(qm.topPOper())
         if qm.topPOper() == '*' or qm.topPOper() == '/':
             rightO = qm.popPilaO()

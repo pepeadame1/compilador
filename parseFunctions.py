@@ -98,6 +98,8 @@ class quadrupleManager(object):
         '*':{('int','int'): 'int', ('float','float'): 'float', ('int','float'): 'float', ('float','int'):'float'},
         '<':{('int','int'): 'bool',('float','float'):'bool',('int','float'):'bool',('float','int'):'bool'},
         '>':{('int','int'): 'bool',('float','float'):'bool',('int','float'):'bool',('float','int'):'bool'},
+        '<=':{('int','int'): 'bool',('float','float'):'bool',('int','float'):'bool',('float','int'):'bool'},
+        '>=':{('int','int'): 'bool',('float','float'):'bool',('int','float'):'bool',('float','int'):'bool'},
         '!=':{('int','int'):'bool',('float','float'):'bool',('int','float'):'bool',('float','int'):'bool',('char','char'):'bool',('string','string'):'bool'},
         '==':{('int','int'):'bool',('float','float'):'bool',('int','float'):'bool',('float','int'):'bool',('char','char'):'bool',('string','string'):'bool'},
         '&&':{('bool','bool'): 'bool'},
@@ -179,5 +181,18 @@ class quadrupleManager(object):
     def popAvail(self):
         return self.avail.pop()
 
+
+
     def print(self):
-        print(json.dumps(self.quadruplos,indent=2))
+        x = 0
+        for i in self.quadruplos:
+            print("------------------------")
+            print(x,end='| ')
+            print(i[0],end=' |')
+            print(i[1],end=' |')
+            print(i[2],end=' |')
+            print(i[3])
+            x = x+1
+        print("------------------------")
+
+        #print(json.dumps(self.quadruplos,indent=2))
