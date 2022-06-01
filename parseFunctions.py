@@ -57,7 +57,12 @@ class fundir(object):
             self.funDir[id] = [self.currentScopeReturn, dict()]
             self.print()
 
-
+    def getVariableType(self,name):#primero ver en local y luego en global por presedencia
+        if name in self.funDir[self.currentScope][1]:
+            return self.funDir[self.currentScope][1][name][0]
+        elif name in self.funDir["global"][1]:
+            return self.funDir["global"][1][name][0]
+        
 
     def print(self):
         print(json.dumps(self.funDir,indent=2))
@@ -72,6 +77,7 @@ class quadrupleManager(object):
     def __init__(self):
         self.pilaO = []#operandos
         self.pilaT = []#tipo
+        self.POper = []#pila de operadores
 
         self.cubosemantico = {'=':{('int','int'): 'int',('float','float'): 'float', ('char','char'):'char'},
         '-':{('int','int'): 'int', ('float','float'):'float',('int','float'): 'float', ('float','int'):'float'},
@@ -94,3 +100,21 @@ class quadrupleManager(object):
                 print("tipos validos")
                 return True
         return False
+
+    def pushPilaO(self,x):
+        self.pilaO.append(x)
+    
+    def popPilaO(self):
+        return self.pilaO.pop()
+
+    def pushPilaT(self,x):
+        self.pilaT.append(x)
+
+    def popPilaT(self):
+        return self.pilaT.pop()
+
+    def pushPOper(self,x):
+        self.POper.append(x)
+
+    def popPOper(self):
+        return self.POper.pop()

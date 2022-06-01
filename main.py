@@ -211,6 +211,7 @@ class BasicParser(Parser):
         dir.setscope(p[2])
         dir.setreturn(dir.currentType)
         dir.agregarFunc(p[2])
+        return p
 
     '''
     @_('FUNCION ID funcs2')##no recuerdo para que pusimos esto
@@ -388,28 +389,54 @@ class BasicParser(Parser):
     def nocondicional(self,p):
         return p
 
-    @_('termino')
+    @_('termino validatipos')
     def exp(self,p):
         return p
 
-    @_('termino "+" exp')
+    @_('')
+    def validatipos(self,p):
+        rightO = qm.popPilaO()
+        rightType = qm.
+        return p
+
+    @_('pushomas exp')
     def exp(self,p):
         return p
 
-    @_('termino "-" exp')
+    @_('termino "+"')
+    def pushomas(self,p):
+        qm.pushPilaO(p[1])
+        return p
+
+    @_('pushomin exp')
     def exp(self,p):
+        return p
+
+    @_('termino "-"')
+    def pushomin(self,p):
+        qm.pushPilaO(p[1])
         return p
 
     @_('factor')
     def termino(self,p):
         return p
 
-    @_('factor "*" termino')
+    @_('pushomult termino')
     def termino(self,p):
         return p
 
-    @_('factor "/" termino')
+    @_('termino "*"')
+    def pushomult(self,p):
+        qm.pushPilaO(p[1])
+        return p
+
+    @_('pushodiv termino')
     def termino(self,p):
+        return p
+
+    @_('termino "/"')
+    def pushodiv(self,p):
+        qm.pushPilaO(p[1])
         return p
 
     @_('"(" expresion ")"')
@@ -430,6 +457,8 @@ class BasicParser(Parser):
 
     @_('ID')
     def varcte(self,p):
+        qm.pushPilaO(p[0])
+        qm.pushPilaT(dir.getVariableType(p[0]))
         return p
 
     @_('CTEINT')
