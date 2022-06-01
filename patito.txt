@@ -3,7 +3,6 @@ programa covid19;
 var 
     int i,j,p,maxVariables,maxRenglones;
     int valor, Arreglo[10], OtroArreglo[10];
-    dataframe DatosCovid;
     string VarCovid[100];
 
 funcion int fact(int j, string k)

@@ -291,13 +291,24 @@ class BasicParser(Parser):
 
     @_('ID "=" expresion ";"')
     def asignacion(self,p):
+        leftO = qm.popPilaO()
+        leftT = qm.popPilaT()
+        print("lo que vamos a asignar")
+        print(leftO)
+        print("tipo:")
+        print(leftT)
+        tipoId = dir.getVariableType(p[0])
+        if qm.verificarTiposOp('=',(leftT,tipoId)):
+            qm.pushQuadruple('=',leftO,"",p[0])
+        else:
+            print("type mismatch")
         return p
 
-    @_('ID "(" ")" ";"')
+    @_('ID "(" ")" ";"')#creo que aqui
     def void(self,p):
         return p
 
-    @_('ID "(" void2 ";"')
+    @_('ID "(" void2 ";"')#creo que aqui
     def void(self,p):
         return p
 
@@ -389,35 +400,84 @@ class BasicParser(Parser):
     def nocondicional(self,p):
         return p
 
-    @_('termino validatipos')
+    @_('termino validatipos1')
     def exp(self,p):
         return p
 
     @_('')
-    def validatipos(self,p):
-        rightO = qm.popPilaO()
-        rightType = qm.
+    def validatipos1(self,p):
+        #print("validatipos")
+        print(qm.topPOper())
+        if qm.topPOper() == '+' or qm.topPOper() == '-':
+            rightO = qm.popPilaO()
+            rightType = qm.popPilaT()
+            leftO = qm.popPilaO()
+            leftType = qm.popPilaT()
+            operator = qm.popPOper()
+            if qm.verificarTiposOp(operator,(rightType,leftType)):
+                resultT = qm.regresaTipoCuboSemantico(operator,(rightType,leftType))
+                qm.pushAvail(qm.resultCounter())
+                qm.pushQuadruple(operator,leftO,rightO,qm.resultCounter())#falta entender result
+                qm.pushPilaO(qm.resultCounter())#falta entender result
+                qm.pushPilaT(resultT)
+                qm.resultAdd()
+            else:
+                print("type mismatch")
         return p
+
+    @_('')
+    def validatipos2(self,p):
+        
+        #print("validatipos")
+        print(qm.topPOper())
+        if qm.topPOper() == '*' or qm.topPOper() == '/':
+            rightO = qm.popPilaO()
+            rightType = qm.popPilaT()
+            leftO = qm.popPilaO()
+            leftType = qm.popPilaT()
+            operator = qm.popPOper()
+            print("rightO")
+            print(rightO)
+            print("rightType")
+            print(rightType)
+            print("leftO")
+            print(leftO)
+            print("leftType")
+            print(leftType)
+            print("operator")
+            print(operator)
+            if qm.verificarTiposOp(operator,(rightType,leftType)):
+                resultT = qm.regresaTipoCuboSemantico(operator,(rightType,leftType))
+                qm.pushAvail(qm.resultCounter())
+                qm.pushQuadruple(operator,leftO,rightO,qm.resultCounter())#falta entender result
+                qm.pushPilaO(qm.resultCounter())#falta entender result
+                qm.pushPilaT(resultT)
+                qm.resultAdd()
+            else:
+                print("type mismatch")
+        
+        return p
+
 
     @_('pushomas exp')
     def exp(self,p):
         return p
 
-    @_('termino "+"')
+    @_('termino validatipos1 "+"')
     def pushomas(self,p):
-        qm.pushPilaO(p[1])
+        qm.pushPOper(p[2])
         return p
 
     @_('pushomin exp')
     def exp(self,p):
         return p
 
-    @_('termino "-"')
+    @_('termino validatipos1 "-"')
     def pushomin(self,p):
-        qm.pushPilaO(p[1])
+        qm.pushPOper(p[2])
         return p
 
-    @_('factor')
+    @_('factor validatipos2')
     def termino(self,p):
         return p
 
@@ -425,18 +485,18 @@ class BasicParser(Parser):
     def termino(self,p):
         return p
 
-    @_('termino "*"')
+    @_('factor validatipos2 "*"')
     def pushomult(self,p):
-        qm.pushPilaO(p[1])
+        qm.pushPOper(p[2])
         return p
 
     @_('pushodiv termino')
     def termino(self,p):
         return p
 
-    @_('termino "/"')
+    @_('factor validatipos2 "/"')
     def pushodiv(self,p):
-        qm.pushPilaO(p[1])
+        qm.pushPOper(p[2])
         return p
 
     @_('"(" expresion ")"')
@@ -463,18 +523,26 @@ class BasicParser(Parser):
 
     @_('CTEINT')
     def varcte(self,p):
+        qm.pushPilaO(p[0])
+        qm.pushPilaT('int')
         return p
 
     @_('CTEFLOAT')
     def varcte(self,p):
+        qm.pushPilaO(p[0])
+        qm.pushPilaT('float')
         return p
 
     @_('CTESTRING')
     def varcte(self,p):
+        qm.pushPilaO(p[0])
+        qm.pushPilaT('string')
         return p
 
     @_('CTECHAR')
     def varcte(self,p):
+        qm.pushPilaO(p[0])
+        qm.pushPilaT('char')
         return p
 
     @_('')
@@ -482,9 +550,9 @@ class BasicParser(Parser):
         print("codigo valido")
         dir.print()
         #dir.test()
-
+        qm.print()
         #area de tests
-        qm.verificarTiposOp("+",("int","float"))
+        #qm.verificarTiposOp("+",("int","float"))
 
 
         dir.borrar()

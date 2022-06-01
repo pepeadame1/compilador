@@ -1,6 +1,7 @@
 from inspect import _void
 from textwrap import indent
 import json
+from unittest import result
 
 #todas las funciones tienen que tener self como parametro
 
@@ -78,6 +79,9 @@ class quadrupleManager(object):
         self.pilaO = []#operandos
         self.pilaT = []#tipo
         self.POper = []#pila de operadores
+        self.avail = []#pila para los resultados temporales
+        self.quadruplos = []#pila de quadruplos
+        self.resultI = 0 #para tener el index de t1,t2
 
         self.cubosemantico = {'=':{('int','int'): 'int',('float','float'): 'float', ('char','char'):'char'},
         '-':{('int','int'): 'int', ('float','float'):'float',('int','float'): 'float', ('float','int'):'float'},
@@ -95,17 +99,21 @@ class quadrupleManager(object):
 
     def verificarTiposOp(self,op,dupla):#verifica si una operacion se encuentra en el cubo semantico
         if op in self.cubosemantico:
-            print("operacion valida, falta verificar tipos")
             if dupla in self.cubosemantico[op]:
-                print("tipos validos")
                 return True
         return False
+
+    def regresaTipoCuboSemantico(self,op,dupla):
+        return self.cubosemantico[op][dupla]
 
     def pushPilaO(self,x):
         self.pilaO.append(x)
     
     def popPilaO(self):
-        return self.pilaO.pop()
+        if self.pilaO:
+            return self.pilaO.pop()
+        else:
+            print("out of shit")
 
     def pushPilaT(self,x):
         self.pilaT.append(x)
@@ -118,3 +126,22 @@ class quadrupleManager(object):
 
     def popPOper(self):
         return self.POper.pop()
+
+    def topPOper(self):
+        if self.POper:
+            return self.POper[-1]
+
+    def pushAvail(self,x):
+        self.avail.append(x)
+
+    def pushQuadruple(self,op,left,right,result):
+        self.quadruplos.append([op,left,right,result])
+
+    def resultCounter(self):
+        return self.resultI
+
+    def resultAdd(self):
+        self.resultI = self.resultI+1
+
+    def print(self):
+        print(json.dumps(self.quadruplos,indent=2))
