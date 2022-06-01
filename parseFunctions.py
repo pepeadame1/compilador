@@ -145,11 +145,23 @@ class quadrupleManager(object):
     def pushQuadruple(self,op,left,right,result):
         self.quadruplos.append([op,left,right,result])
 
+    def pushPSaltos(self,x):
+        self.pSaltos.append(x)
+    
+    def popPSaltos(self):
+            return self.pSaltos.pop()
+
     def resultCounter(self):
         return self.resultI
 
     def resultAdd(self):
         self.resultI = self.resultI+1
+
+    def quadCount(self):
+        return self.quadruplos.__sizeof__ -1
+    
+    def fill(self,end,cont):
+        self.quadruplos[end][3] = cont
 
     def print(self):
         print(json.dumps(self.quadruplos,indent=2))

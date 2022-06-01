@@ -404,12 +404,29 @@ class BasicParser(Parser):
     def expresion2(self,p):
         return p
 
-    @_('SI "(" expresion ")" ENTONCES bloque SINO bloque')
+    @_('decision1 ENTONCES bloque SINO bloque')
     def decision(self,p):
         return p
 
-    @_('SI "(" expresion ")" ENTONCES bloque')
+    @_('decision1 ENTONCES bloque')
     def decision(self,p):
+        end = qm.popPSaltos()
+        cont = qm.quadCount()
+        qm.fill(end,cont)
+        return p
+
+    @_('SI "(" expresion ")"')
+    def decision1(self,p):
+        tipo = qm.popPilaT()
+        if tipo != bool:
+            print("type mismatch")
+        
+        else:
+            exp = qm.popPilaO()
+            qm.pushQuadruple("GotoF",exp,"","_")
+            cont = qm.quadCount()
+            qm.pushPSaltos(cont - 1)
+
         return p
 
     @_('MIENTRAS "(" expresion ")" HAZ bloque')
