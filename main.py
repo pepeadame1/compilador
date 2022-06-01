@@ -404,7 +404,7 @@ class BasicParser(Parser):
     def expresion2(self,p):
         return p
 
-    @_('decision1 ENTONCES bloque SINO bloque')
+    @_('decision1 ENTONCES bloque decision2 SINO bloque')
     def decision(self,p):
         return p
 
@@ -426,8 +426,17 @@ class BasicParser(Parser):
             qm.pushQuadruple("GotoF",exp,"","_")
             cont = qm.quadCount()
             qm.pushPSaltos(cont - 1)
-
         return p
+    
+    @_('')
+    def decision2(self,p):
+        qm.pushQuadruple("GOTO","","","_")
+        false = qm.popPSaltos()
+        qm.pushPSaltos(cont - 1)
+        cont = qm.quadCount
+        qm.fill(false,cont)
+        return p
+
 
     @_('MIENTRAS "(" expresion ")" HAZ bloque')
     def condicional(self,p):
