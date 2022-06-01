@@ -121,19 +121,25 @@ class quadrupleManager(object):
         if self.pilaO:
             return self.pilaO.pop()
         else:
-            print("out of shit")
+            print("out of values")
 
     def pushPilaT(self,x):
         self.pilaT.append(x)
 
     def popPilaT(self):
-        return self.pilaT.pop()
+        if self.pilaT:
+            return self.pilaT.pop()
+        else:
+            print("out of values")
 
     def pushPOper(self,x):
         self.POper.append(x)
 
     def popPOper(self):
-        return self.POper.pop()
+        if self.POper:
+            return self.POper.pop()
+        else:
+            print("out of values")
 
     def topPOper(self):
         if self.POper:
@@ -149,8 +155,10 @@ class quadrupleManager(object):
         self.pSaltos.append(x)
     
     def popPSaltos(self):
+        if self.pSaltos:
             return self.pSaltos.pop()
-
+        else:
+            print("out of values")
     def resultCounter(self):
         return self.resultI
 
@@ -158,10 +166,14 @@ class quadrupleManager(object):
         self.resultI = self.resultI+1
 
     def quadCount(self):
-        return self.quadruplos.__sizeof__ -1
+        return len(self.quadruplos)
     
     def fill(self,end,cont):
         self.quadruplos[end][3] = cont
+        print(self.quadruplos[end])
+
+    def popAvail(self):
+        return self.avail.pop()
 
     def print(self):
         print(json.dumps(self.quadruplos,indent=2))

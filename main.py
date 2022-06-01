@@ -402,6 +402,19 @@ class BasicParser(Parser):
 
     @_('"=" "=" exp')
     def expresion2(self,p):
+        rightO = qm.popPilaO()
+        rightT = qm.popPilaT()
+        leftO = qm.popPilaO()
+        leftT = qm.popPilaT()
+        if qm.verificarTiposOp('==',(rightT,leftT)):#si es valido
+            resultT = qm.regresaTipoCuboSemantico('==',(rightT,leftT))
+            qm.pushAvail(qm.resultCounter())
+            qm.pushQuadruple('==',leftO,rightO,qm.resultCounter())
+            qm.pushPilaO(qm.resultCounter())
+            qm.pushPilaT(resultT)
+            qm.resultAdd()
+        else:
+            print("type mismatch")
         return p
 
     @_('decision1 ENTONCES bloque SINO bloque')
@@ -410,6 +423,7 @@ class BasicParser(Parser):
 
     @_('decision1 ENTONCES bloque')
     def decision(self,p):
+        
         end = qm.popPSaltos()
         cont = qm.quadCount()
         qm.fill(end,cont)
@@ -417,21 +431,48 @@ class BasicParser(Parser):
 
     @_('SI "(" expresion ")"')
     def decision1(self,p):
+        print("ifffffff")
         tipo = qm.popPilaT()
-        if tipo != bool:
+        #print(qm.popPilaO())
+        #print(qm.popPilaO())
+        #print(qm.popAvail())
+        if tipo != "bool":
             print("type mismatch")
-        
         else:
-            exp = qm.popPilaO()
-            qm.pushQuadruple("GotoF",exp,"","_")
+            exp = qm.popAvail()
+            qm.pushQuadruple("GotoF",exp,"","")
             cont = qm.quadCount()
             qm.pushPSaltos(cont - 1)
-
+        print("end iffffff")
         return p
 
-    @_('MIENTRAS "(" expresion ")" HAZ bloque')
+    @_('MIENTRAS condicional1 "(" expresion ")" condicional2 HAZ bloque condicional3')
     def condicional(self,p):
         return p
+
+    @_('')
+    def condicional1(self,p):
+        qm.pushPSaltos(qm.quadCount())
+        return p
+
+    @_('')
+    def condicional2(self,p):
+        expT = qm.popPilaT()
+        if expT == bool:
+            result = qm.popPilaO()
+            qm.pushQuadruple("GotoF",result,"","")
+            qm.pushPSaltos(qm.quadCount()-1)
+        else:
+            print("error")
+        return p
+
+    @_('')
+    def condicional3(self,p):
+        end = qm.popPSaltos()
+        ret = qm.popPSaltos()
+        qm.pushQuadruple("GOTO",'','',ret)
+        qm.fill(end,qm.quadCount())
+
 
     @_('DESDE ID "=" exp HASTA exp HACER bloque')
     def nocondicional(self,p):
