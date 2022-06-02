@@ -554,9 +554,55 @@ class BasicParser(Parser):
         qm.fill(end,qm.quadCount())
 
 
-    @_('DESDE ID "=" exp HASTA exp HACER bloque')
+    @_('DESDE nocondicional1 "=" exp nocondicional2 HASTA exp nocondicional3 HACER bloque nocondicional4')
     def nocondicional(self,p):
         return p
+
+    @_('ID')
+    def nocondicional1(self,p):#punto 1
+        tipo = dir.getVariableType(p[0])
+        if tipo == 'int' or tipo == 'float':
+            qm.pushPilaO(p[0])
+            qm.pushPilaT(tipo)
+        else:
+            print("type mismatch")
+        return p
+
+    @_('')
+    def nocondicional2(self,p):#punto 2
+        expT = qm.popPilaT()
+        if expT == 'int' or expT == 'float':
+            exp = qm.popPilaO()
+            vControl = exp
+            if qm.verificarTiposOp('=',(expT,qm.pilaT[-1])):
+                qm.pushQuadruple('=',exp,'','vControl')
+            else:
+                print("error: type mismatch")
+    
+    @_('')
+    def nocondicional3(self,p):#punto 3
+        expT = qm.popPilaT()
+        if expT == 'int' or expT == 'float':
+            exp = qm.popPilaO()
+            qm.pushQuadruple('=',exp,'','vFinal')
+            qm.pushQuadruple('<','vControl','vFinal','Tx')
+            qm.pushPSaltos(qm.quadCount()-1)
+            qm.pushQuadruple('GotoF','Tx','','')
+            qm.pushPSaltos(qm.quadCount()-1)
+        else:
+            print("error: type mismatch")
+
+    @_('')
+    def nocondicional4(self,p):#punto 4
+        qm.pushQuadruple('+','vControl',1,'Ty')
+        qm.pushQuadruple('=','Ty','','vControl')
+        qm.pushQuadruple('=','Ty','',qm.pilaO[-1])
+        fin = qm.popPSaltos()
+        ret = qm.popPSaltos()
+        qm.pushQuadruple('GOTO','','',ret)
+        qm.fill(fin,qm.quadCount())
+        elimina = qm.popPilaO()
+        eliminaT = qm.popPilaT()
 
     @_('termino validatipos1')
     def exp(self,p):

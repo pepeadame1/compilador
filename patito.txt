@@ -10,9 +10,11 @@ var int i;
 {
     i = j + (p-j*2+j);
     si(j == 1) entonces{
-        regresa(j);
+        lee(i);
+        i = 3;
     }sino{
-        regresa(j);
+        lee(j);
+        p = 5;
     }
 }
 
@@ -25,6 +27,10 @@ principal(){
 
     mientras(i > 0) haz {
         escribe("test");
+    }
+
+    desde i = 12 hasta 10 hacer{
+        lee(j);
     }
 
     j = p*2;
