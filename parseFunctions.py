@@ -14,7 +14,9 @@ class fundir(object):
         self.programName = ""
         self.currentScope = ""
         self.currentScopeReturn = ""
+        self.newScope = ""
         self.currentType = ""
+        self.paramC = 0
 
     def addProgram(self,id):
         self.programName = id
@@ -26,8 +28,10 @@ class fundir(object):
         self.currentType = type
 
     def setscope(self,scope):
-        
         self.currentScope = scope
+
+    def setNewScope(self,scope):
+        self.newScope = scope
 
     def setreturn(self, regresa):
         self.currentScopeReturn = regresa
@@ -57,7 +61,7 @@ class fundir(object):
         #self.currentScopeReturn = ""
         #self.currentType = "void"
         if id in self.funDir: #ya esta la func en la tabla
-            print("error the function has already been decalred")
+            print("error: la funcion ya fue declarada previamente")
         else:
             self.funDir[id] = [[self.currentScopeReturn], dict()]
             self.paraTable[self.currentScope] = []
@@ -79,6 +83,40 @@ class fundir(object):
     def addParamT(self,paramT):
         self.paraTable[self.currentScope].append(paramT)
 
+    #################################################
+    def funcExists(self,id):
+        if id in self.funDir:
+            return True
+        else:
+            print("error: la funcion no ha sido declarada")
+            return False
+
+    def startParamC(self):
+        self.paramC = 0
+        #self.paraPointer = id(self.paraTable[id][0]) ##segun yo el id regresa el espacio de memoria
+
+    def sumaParamC(self):
+        self.paramC = self.paramC + 1
+        #self.paraPointer = id(self.paraTable[self.currentScope][self.paramC])
+    
+    def validaParam(self, argumentType):
+        if argumentType == self.paraTable[self.newScope][self.paramC]: ###no estoy seguro de cual es el currentScope
+            return True
+        else:
+            print("error: el tipo de parametros esta mal")
+            return False
+
+    def getParamC(self):
+        return self.paramC
+
+    def validaSize(self):
+        if self.paramC == len(self.paraTable[self.newScope])-1:
+            return True
+        else:
+            print("El numero de parametros no es correcto")
+            return False
+
+    ########################################################
 
     def print(self):
         #print(json.dumps(self.funDir,indent=2))
@@ -125,9 +163,14 @@ class fundir(object):
 
     def setQuadCounter(self,count):
         if len(self.funDir[self.currentScope][0])>3:
-            self.funDir[self.currentScope][0][2] = count
+            self.funDir[self.currentScope][0][3] = count
         else:
             self.funDir[self.currentScope][0].append(count)
+
+    def getQuadCounter(self):
+        print("QUAD COUNT")
+        print(self.funDir[self.newScope][0][3])
+        return self.funDir[self.newScope][0][3]
 
 class printTest:
     def __init__(self):

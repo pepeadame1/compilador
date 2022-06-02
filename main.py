@@ -309,25 +309,58 @@ class BasicParser(Parser):
             print("type mismatch")
         return p
 
-    @_('ID "(" ")" ";"')#creo que aqui
+    @_('verifyid "(" ")" ";"')
     def void(self,p):
         return p
 
-    @_('ID "(" void2 ";"')#creo que aqui
+    @_('verifyid "(" void2 ";"')
     def void(self,p):
         return p
 
     @_('ID')
-    def verifyid(self,p):
+    def verifyid(self,p):#nodo 1 y 2 de function call
         
+        if dir.funcExists(p[0]):
+            dir.startParamC()
+            dir.setNewScope(p[0])
+            qm.pushQuadruple("ERA","","",p[0])
+            
+        else:
+            print("no se encontro la funcion")
+            exit()
         return p
 
-    @_('expresion ")"')
+    @_('expresion void4 ")" void6')
     def void2(self,p):
         return p
 
-    @_('expresion "," void2')
+    @_('expresion void4 "," void5 void2')
     def void2(self,p):
+        return p
+
+    @_('')
+    def void4(self,p):#nodo 3 de function call
+        arg = qm.popPilaO()
+        argT = qm.popPilaT()
+        if dir.validaParam(argT):
+            
+            qm.pushQuadruple("PARAMETER",arg,"","param"+str(dir.getParamC()))
+            print("entra")
+        else:
+            exit()
+        return p
+
+    @_('')
+    def void5(self,p):#nodo 4 de function call
+        dir.sumaParamC()
+        return p
+
+    @_('')
+    def void6(self,p):#nodo 5 y 6 de function call
+        if dir.validaSize():
+            qm.pushQuadruple("GOSUB",dir.currentScope,"",dir.getQuadCounter())
+        else:
+            exit()
         return p
 
     @_('REGRESA "(" exp ")" ";"')
