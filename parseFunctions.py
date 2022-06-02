@@ -79,6 +79,31 @@ class fundir(object):
     def addParamT(self,paramT):
         self.paraTable[self.currentScope].append(paramT)
 
+    #################################################
+    def funcExists(self,id):
+        if id in self.funDir:
+            return True
+        else:
+            print("error the function has not been declared")
+            return False
+
+    def startParamC(self, id):
+        self.paramC = 0
+        self.paraPointer = id(self.paraTable[id][0]) ##segun yo el id regresa el espacio de memoria
+
+    def sumaParamC(self):
+        self.paramC = self.paramC + 1
+        self.paraPointer = id(self.paraTable[self.currentScope][self.paramC])
+    
+    def validaParam(self, argumentType):
+        if argumentType == self.paraTable[self.currentScope][self.paramC]: ###no estoy seguro de cual es el currentScope
+            return True
+        else:
+            print("error parameter type differs from definition")
+            return False
+
+    
+    ########################################################
 
     def print(self):
         #print(json.dumps(self.funDir,indent=2))

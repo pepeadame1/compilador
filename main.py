@@ -246,6 +246,43 @@ class BasicParser(Parser):
         dir.setAvail(qm.getAvail())
         return p
 
+    ###################################
+    @_('verFunc "(" llamadaFunc1')
+    def llamadaFunc(self,p):
+        return p
+    
+    @_('ID')
+    def verFunc(self,p):
+        dir.funcExists(p[0])
+        qm.pushQuadruple("ERA","","",p[0])
+        dir.startParamC(p[0])
+        return p
+    
+    @_('verPara ")"')
+    def llamadaFunc1(self,p):
+        if dir.paraPointer is None:
+            qm.pushQuadruple("GOSUB",dir.currentScope,"",dir.funDir[self.currentScope][0][2])###No me gusta esto
+        return p
+    
+    @_('verPara "," sumaCP llamadaFunc1')
+    def llamadaFunc1(self,p):
+        return p
+
+    @_('param')
+    def verPara(self,p):
+        argument = qm.popPilaO()
+        argumentT = qm.popPilaT()
+        dir.validaParam(argumentT)
+        qm.pushQuadruple("PARAMETER",argument,"","param"+dir.currentScope)
+        return p
+
+    @_('')
+    def sumaCP(self,p):
+        dir.sumaParamC()
+        return p
+
+    ######################################### 
+
     @_('"{" "}"')
     def bloque(self,p):
         return p
