@@ -11,6 +11,7 @@ class fundir(object):
 
     def __init__(self):
         self.funDir = dict()
+        self.constTable = [dict(),dict(),dict(),dict(),dict()]#en orden [int,float,char,string,datafrome]
         self.programName = ""
         self.currentScope = ""
         self.currentScopeReturn = ""
@@ -80,6 +81,40 @@ class fundir(object):
         else:
             return False
 
+    def addConst(self,tipo,val):
+        print("tipo snatoeuhanohuahtns")
+        print(tipo)
+        if tipo == 'int':
+            self.constTable[0][val] = "adress"
+        elif tipo=='float':
+            self.constTable[1][val] = "adress"
+        elif tipo=='char':
+            self.constTable[2][val] = "adress"
+        elif tipo=='string':
+            self.constTable[3][val] = "adress"
+        elif tipo=='dataframe':
+            self.constTable[4][val] = "adress"
+
+
+    def validaConst(self,tipo,val):
+        if tipo == 'int':
+            if val in self.constTable[0]:
+                return True
+        elif tipo=='float':
+            if val in self.constTable[1]:
+                return True
+        elif tipo=='char':
+            if val in self.constTable[2]:
+                return True
+        elif tipo=='string':
+            if val in self.constTable[3]:
+                return True
+        elif tipo=='dataframe':
+            if val in self.constTable[4]:
+                return True
+        else:
+            return False
+
     def addParamT(self,paramT):
         self.paraTable[self.currentScope].append(paramT)
 
@@ -132,6 +167,32 @@ class fundir(object):
     def printParams(self):
         print(self.paraTable)
 
+    def printConst(self):
+        print(self.constTable)
+        print("----------")
+        print('int: ',end='')
+        for i in self.constTable[0]:
+            print(i,end=', ')
+        print('')
+        print('float: ',end='')
+        for i in self.constTable[1]:
+            print(i,end=', ')
+        print('')
+        print('char: ',end='')
+        for i in self.constTable[2]:
+            print(i,end=', ')
+        print('')
+        print('string: ',end='')
+        for i in self.constTable[3]:
+            print(i,end=', ')
+        print('')
+        print('dataframe: ',end='')
+        for i in self.constTable[4]:
+            print(i,end=', ')
+        print('')
+        print("----------")
+
+
     def countParams(self):
         lenght = len(self.paraTable[self.currentScope])
         if len(self.funDir[self.currentScope][0])>1:
@@ -168,8 +229,6 @@ class fundir(object):
             self.funDir[self.currentScope][0].append(count)
 
     def getQuadCounter(self):
-        print("QUAD COUNT")
-        print(self.funDir[self.newScope][0][3])
         return self.funDir[self.newScope][0][3]
 
 class printTest:
@@ -219,7 +278,7 @@ class quadrupleManager(object):
         if self.pilaO:
             return self.pilaO.pop()
         else:
-            print("out of values")
+            print("no hay valores en la pilaO")
 
     def pushPilaT(self,x):
         self.pilaT.append(x)
@@ -228,7 +287,7 @@ class quadrupleManager(object):
         if self.pilaT:
             return self.pilaT.pop()
         else:
-            print("out of values")
+            print("no hay valores en la pilaT")
 
     def pushPOper(self,x):
         self.POper.append(x)
@@ -237,7 +296,7 @@ class quadrupleManager(object):
         if self.POper:
             return self.POper.pop()
         else:
-            print("out of values")
+            print("no hay valores en la pila POper")
 
     def topPOper(self):
         if self.POper:
@@ -256,7 +315,7 @@ class quadrupleManager(object):
         if self.pSaltos:
             return self.pSaltos.pop()
         else:
-            print("out of values")
+            print("no hay valores en la pila de saltos")
     def resultCounter(self):
         return self.resultI
 
@@ -288,3 +347,4 @@ class quadrupleManager(object):
         print("------------------------")
 
         #print(json.dumps(self.quadruplos,indent=2))
+

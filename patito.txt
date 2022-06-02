@@ -34,6 +34,8 @@ principal(){
     lee(p);
     escribe(p);
     escribe("HOLA");
+    escribe('c');
+    f1 = 20.5;
     yolo(i,f1,ash);
     mientras(i > 0) haz {
         escribe("test");

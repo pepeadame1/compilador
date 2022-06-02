@@ -47,8 +47,9 @@ class BasicLexer(Lexer):
     def space(self,t):
         pass
 
-    @_(r'"[^"]*"')
+    @_(r'\"([^""]+)\"')
     def CTESTRING(self,t):
+        print(t.value)
         return t
 
     @_(r'\d+\.\d+')
@@ -58,12 +59,12 @@ class BasicLexer(Lexer):
 
     @_(r'\d+')
     def CTEINT(self,t):
-        t.value = float(t.value)
+        t.value = t.value
         return t
 
     @_(r'\'.*\'')
     def CTECHAR(self,t):
-        t.value = float(t.value)
+        t.value = t.value
         return t
 
     @_(r'[a-zA-Z_][a-zA-Z0-9_]*')
@@ -128,6 +129,7 @@ class BasicParser(Parser):
     def var2(self,p):
         dir.countLocalVar()
         dir.setQuadCounter(qm.quadCount())
+        
         return p
 
     @_('ID "[" CTEINT "]"')#aqui notar que es un arreglo
@@ -345,7 +347,7 @@ class BasicParser(Parser):
         if dir.validaParam(argT):
             
             qm.pushQuadruple("PARAMETER",arg,"","param"+str(dir.getParamC()))
-            print("entra")
+            
         else:
             exit()
         return p
@@ -384,9 +386,18 @@ class BasicParser(Parser):
         if dir.vairableExists(p[0]):#verificar que exista el id
             qm.pushQuadruple('LEE',"","",p[0])
         return p
+        
 
     @_('ESCRIBE "(" escritura2')
     def escritura(self,p):
+        return p
+    
+    @_('escritura4 ")" ";"')
+    def escritura2(self,p):
+        return p
+
+    @_('escritura4 "," escritura2')
+    def escritura2(self,p):
         return p
 
     @_('escritura3 ")" ";"')
@@ -397,13 +408,12 @@ class BasicParser(Parser):
     def escritura2(self,p):
         return p
 
-    @_('escritura4 ")" ";"')
-    def escritura2(self,p):
-        return p
-
-    @_('escritura4 "," escritura2')
-    def escritura2(self,p):
-        return p
+    @_('CTESTRING')
+    def escritura4(self,p):#se crea el cuadruplo para escribir un string
+        #print("si encontro el string")
+        if not dir.validaConst('string',p[0]):
+            dir.addConst('string',p[0])
+        qm.pushQuadruple("ESCRIBE","","",p[0])
 
     @_('expresion')
     def escritura3(self,p):#se crea el cuadruplo para escribir una expresion
@@ -414,9 +424,7 @@ class BasicParser(Parser):
         qm.pushQuadruple("ESCRIBE","","",exp)
         return p
 
-    @_('CTESTRING')
-    def escritura4(self,p):#se crea el cuadruplo para escribir un string
-        qm.pushQuadruple("ESCRIBE","","",p[0])
+    
 
     @_('CARGAARCHIVO "(" ID "," RUTA "," INT "," INT ")" ";"')
     def cargadatos(self,p):
@@ -444,7 +452,7 @@ class BasicParser(Parser):
             qm.pushPilaT(resultT)
             qm.resultAdd()
         else:
-            print("type mismatch")
+            print("tipos de datos no iguales")
         return p
 
     @_('">" "=" exp')
@@ -461,7 +469,7 @@ class BasicParser(Parser):
             qm.pushPilaT(resultT)
             qm.resultAdd()
         else:
-            print("type mismatch")
+            print("tipos de datos no iguales")
         return p
 
     @_('"<" "=" exp')
@@ -478,7 +486,7 @@ class BasicParser(Parser):
             qm.pushPilaT(resultT)
             qm.resultAdd()
         else:
-            print("type mismatch")
+            print("tipos de datos no iguales")
         return p
 
     @_('">" exp')
@@ -495,7 +503,7 @@ class BasicParser(Parser):
             qm.pushPilaT(resultT)
             qm.resultAdd()
         else:
-            print("type mismatch")
+            print("tipos de datos no iguales")
         return p
 
     @_('"<" ">" exp')
@@ -516,7 +524,7 @@ class BasicParser(Parser):
             qm.pushPilaT(resultT)
             qm.resultAdd()
         else:
-            print("type mismatch")
+            print("tipos de datos no iguales")
         return p
 
     @_('decision1 ENTONCES bloque decision2 SINO bloque')
@@ -609,7 +617,7 @@ class BasicParser(Parser):
             if qm.verificarTiposOp('=',(expT,qm.pilaT[-1])):
                 qm.pushQuadruple('=',exp,'','vControl')
             else:
-                print("error: type mismatch")
+                print("error: los tipos de variable no son iguales")
 
     @_('')
     def nocondicional3(self,p):#punto 3
@@ -622,7 +630,7 @@ class BasicParser(Parser):
             qm.pushQuadruple('GotoF','Tx','','')
             qm.pushPSaltos(qm.quadCount()-1)
         else:
-            print("error: type mismatch")
+            print("error: los tipos de variable no son iguales")
 
     @_('')
     def nocondicional4(self,p):#punto 4
@@ -745,25 +753,37 @@ class BasicParser(Parser):
     def varcte(self,p):
         qm.pushPilaO(p[0])
         qm.pushPilaT('int')
+        if not dir.validaConst('int',p[0]):
+            
+            dir.addConst('int',p[0])
         return p
 
     @_('CTEFLOAT')
     def varcte(self,p):
         qm.pushPilaO(p[0])
         qm.pushPilaT('float')
+        if not dir.validaConst('float',p[0]):
+            dir.addConst('float',p[0])
         return p
 
     @_('CTESTRING')
     def varcte(self,p):
         qm.pushPilaO(p[0])
         qm.pushPilaT('string')
+        if not dir.validaConst('string',p[0]):
+            dir.addConst('string',p[0])
         return p
 
     @_('CTECHAR')
     def varcte(self,p):
         qm.pushPilaO(p[0])
         qm.pushPilaT('char')
+        if not dir.validaConst('char',p[0]):
+            dir.addConst('char',p[0])
         return p
+
+
+
 
     @_('')
     def fin(self,p):
@@ -774,6 +794,7 @@ class BasicParser(Parser):
         dir.printParams()
         #area de tests
         #qm.verificarTiposOp("+",("int","float"))
+        dir.printConst()
         dir.borrar()
         return p
 
