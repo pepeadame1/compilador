@@ -85,7 +85,6 @@ class BasicParser(Parser):
     @_("PROGRAMA ID")
     def catcherprograma(self,p):
         dir.addProgram(p[1])
-        #dir.print()
         return p
 
     @_(' programa2 PRINCIPAL "(" ")" bloque fin')
@@ -114,7 +113,6 @@ class BasicParser(Parser):
 
     @_('varshelper var2')
     def vars(self,p):
-        #dir.checarTablaScope()
         return p
 
     @_('VAR')
@@ -128,6 +126,8 @@ class BasicParser(Parser):
 
     @_('tipo var3 ";"')
     def var2(self,p):
+        dir.countLocalVar()
+        dir.setQuadCounter(qm.quadCount())
         return p
 
     @_('ID "[" CTEINT "]"')#aqui notar que es un arreglo
@@ -149,12 +149,10 @@ class BasicParser(Parser):
     @_('ID ","')
     def varhelp(self,p):
         dir.agregarVariable(p[0])
-        #dir.print()
 
     @_('ID')
     def varhelp(self,p):
         dir.agregarVariable(p[0])
-        #dir.print()
         return p
 
     @_('INT')
@@ -198,12 +196,11 @@ class BasicParser(Parser):
     @_('tipo ID')
     def paramhelp(self,p):
         dir.agregarVariable(p[1])
+        dir.addParamT(p[0][1])
         return p
 
     @_('funcshelper funcs2')
     def funcs(self,p):
-        #dir.agregarFunc(p[2])
-        #dir.print
         return p
 
     @_('FUNCION tipo ID')
@@ -221,20 +218,32 @@ class BasicParser(Parser):
         return p
     '''
 
-    @_('"(" param ")" funcs3')
+    @_('"(" param ")" countparam funcs3')
     def funcs2(self,p):
         return p
 
-    @_('"(" ")" funcs3')
+    @_('"(" ")" countparam funcs3')
     def funcs2(self,p):
         return p
 
-    @_('vars bloque')
+    @_('')
+    def countparam(self,p):
+        dir.countParams()
+        return p
+
+    @_('vars bloque funcs4')
     def funcs3(self,p):
         return p
 
-    @_('bloque')
+    @_('bloque funcs4')
     def funcs3(self,p):
+        return p
+
+    @_('')
+    def funcs4(self,p):
+        dir.borrarScope()###############################################################
+        qm.pushQuadruple("ENDFunc","","","")
+        dir.setAvail(qm.getAvail())
         return p
 
     @_('"{" "}"')
@@ -293,10 +302,6 @@ class BasicParser(Parser):
     def asignacion(self,p):
         leftO = qm.popPilaO()
         leftT = qm.popPilaT()
-        print("lo que vamos a asignar")
-        print(leftO)
-        print("tipo:")
-        print(leftT)
         tipoId = dir.getVariableType(p[0])
         if qm.verificarTiposOp('=',(leftT,tipoId)):
             qm.pushQuadruple('=',leftO,"",p[0])
@@ -310,6 +315,11 @@ class BasicParser(Parser):
 
     @_('ID "(" void2 ";"')#creo que aqui
     def void(self,p):
+        return p
+
+    @_('ID')
+    def verifyid(self,p):
+        
         return p
 
     @_('expresion ")"')
@@ -368,7 +378,6 @@ class BasicParser(Parser):
         exp = qm.popPilaO()
         tipo = qm.popPilaT()
 
-        print(qm.popPilaT())
         qm.pushQuadruple("ESCRIBE","","",exp)
         return p
 
@@ -407,7 +416,6 @@ class BasicParser(Parser):
 
     @_('">" "=" exp')
     def expresion2(self,p):
-        print("asoenhtaoetuaotnsuhaoehu")
         rightO = qm.popPilaO()
         rightT = qm.popPilaT()
         leftO = qm.popPilaO()
@@ -482,8 +490,6 @@ class BasicParser(Parser):
     def decision(self,p):
         end =qm.popPSaltos()
         cont = qm.quadCount()
-        print(end)
-        print(cont)
         qm.fill(end,cont)
         return p
 
@@ -497,11 +503,8 @@ class BasicParser(Parser):
 
     @_('SI "(" expresion ")"')
     def decision1(self,p):
-        print("ifffffff")
+
         tipo = qm.popPilaT()
-        #print(qm.popPilaO())
-        #print(qm.popPilaO())
-        #print(qm.popAvail())
         if tipo != "bool":
             print("type mismatch")
         else:
@@ -509,7 +512,6 @@ class BasicParser(Parser):
             qm.pushQuadruple("GotoF",exp,"","")
             cont = qm.quadCount()
             qm.pushPSaltos(cont-1)
-        print("end iffffff")
         return p
     
     @_('')
@@ -519,9 +521,6 @@ class BasicParser(Parser):
         false = qm.popPSaltos()
         cont = qm.quadCount()
         qm.pushPSaltos(cont - 1)
-        print('falseEeeeeeee')
-        print(false)
-        print(cont)
         qm.fill(false,cont)
         return p
 
@@ -629,23 +628,12 @@ class BasicParser(Parser):
 
     @_('')
     def validatipos2(self,p):
-        print(qm.topPOper())
         if qm.topPOper() == '*' or qm.topPOper() == '/':
             rightO = qm.popPilaO()
             rightType = qm.popPilaT()
             leftO = qm.popPilaO()
             leftType = qm.popPilaT()
             operator = qm.popPOper()
-            print("rightO")
-            print(rightO)
-            print("rightType")
-            print(rightType)
-            print("leftO")
-            print(leftO)
-            print("leftType")
-            print(leftType)
-            print("operator")
-            print(operator)
             if qm.verificarTiposOp(operator,(rightType,leftType)):
                 resultT = qm.regresaTipoCuboSemantico(operator,(rightType,leftType))
                 qm.pushAvail(qm.resultCounter())
@@ -750,6 +738,7 @@ class BasicParser(Parser):
         dir.print()
         #dir.test()
         qm.print()
+        dir.printParams()
         #area de tests
         #qm.verificarTiposOp("+",("int","float"))
         dir.borrar()

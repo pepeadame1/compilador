@@ -18,6 +18,12 @@ var int i;
     }
 }
 
+funcion void yolo(int a, float j, dataframe big)
+var char y;
+int l;
+{
+    lee(y);
+}
 
 
 principal(){

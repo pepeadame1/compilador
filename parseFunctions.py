@@ -1,4 +1,5 @@
 from inspect import _void
+from itertools import count
 from textwrap import indent
 import json
 from unittest import result
@@ -17,10 +18,9 @@ class fundir(object):
 
     def addProgram(self,id):
         self.programName = id
-        print(self.programName)
-        self.funDir["global"] = ["void",dict()]
+        self.funDir["global"] = [["void",0],dict()]
+        self.paraTable = dict()
         self.currentScope = "global"
-        self.print()
 
     def settype(self,type):
         self.currentType = type
@@ -35,11 +35,15 @@ class fundir(object):
     def borrar(self):#aqui se borra todo
         self.funDir = dict()
 
+    def borrarScope(self):
+        self.funDir[self.currentScope][1] = dict()
+
     def checarTablaScope(self):
         if self.currentScope in self.funDir:#si hay tabla de el scope actual
             print("ya existe esta tabla")
         else:#si no hay tabla para el scope actual
-            self.funDir[self.currentScope] = [self.currentScopeReturn,dict()]
+            self.funDir[self.currentScope] = [[self.currentScopeReturn],dict()]
+            self.paraTable[self.currentScope] = []
 
     def agregarVariable(self, id):
         if id in self.funDir[self.currentScope][1]:#ya esta el id en la tabla
@@ -55,8 +59,8 @@ class fundir(object):
         if id in self.funDir: #ya esta la func en la tabla
             print("error the function has already been decalred")
         else:
-            self.funDir[id] = [self.currentScopeReturn, dict()]
-            self.print()
+            self.funDir[id] = [[self.currentScopeReturn], dict()]
+            self.paraTable[self.currentScope] = []
 
     def getVariableType(self,name):#primero ver en local y luego en global por presedencia
         if name in self.funDir[self.currentScope][1]:
@@ -72,6 +76,10 @@ class fundir(object):
         else:
             return False
 
+    def addParamT(self,paramT):
+        self.paraTable[self.currentScope].append(paramT)
+
+
     def print(self):
         #print(json.dumps(self.funDir,indent=2))
         for key, value in self.funDir.items():
@@ -83,6 +91,43 @@ class fundir(object):
                 print(i,end=': ')
                 print(self.funDir[key][1][i])
 
+    def printParams(self):
+        print(self.paraTable)
+
+    def countParams(self):
+        lenght = len(self.paraTable[self.currentScope])
+        if len(self.funDir[self.currentScope][0])>1:
+            self.funDir[self.currentScope][0][1] = lenght
+        else:
+            self.funDir[self.currentScope][0].append(lenght)
+
+    def setAvail(self,avail):
+        count = len(avail)
+        if len(self.funDir[self.currentScope][0])>4:
+            self.funDir[self.currentScope][0][4] = count
+        else:
+            self.funDir[self.currentScope][0].append(count)
+    
+    def countLocalVar(self):
+        varCount = len(self.funDir[self.currentScope][1])
+        if self.currentScope != "global":
+            lenght = len(self.paraTable[self.currentScope])
+            if len(self.funDir[self.currentScope][0])>2:
+                self.funDir[self.currentScope][0][2] = varCount-lenght
+            else:
+                self.funDir[self.currentScope][0].append(varCount-lenght)
+        elif self.currentScope == "global":
+            varCount = len(self.funDir[self.currentScope][1])
+            if len(self.funDir[self.currentScope][0])>2:
+                self.funDir[self.currentScope][0][2] = varCount
+            else:
+                self.funDir[self.currentScope][0].append(varCount)
+
+    def setQuadCounter(self,count):
+        if len(self.funDir[self.currentScope][0])>3:
+            self.funDir[self.currentScope][0][2] = count
+        else:
+            self.funDir[self.currentScope][0].append(count)
 
 class printTest:
     def __init__(self):
@@ -176,20 +221,16 @@ class quadrupleManager(object):
         self.resultI = self.resultI+1
 
     def quadCount(self):
-        print("quad count:_-----")
-        print(len(self.quadruplos))
         return len(self.quadruplos)
     
     def fill(self,end,cont):
-        print("este es el cuaruplo que se esta modificando:")
-        print(self.quadruplos[end])
         self.quadruplos[end][3] = cont
-        print(self.quadruplos[end])
 
     def popAvail(self):
         return self.avail.pop()
 
-
+    def getAvail(self):
+        return self.avail
 
     def print(self):
         x = 0
