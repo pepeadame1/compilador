@@ -578,7 +578,7 @@ class BasicParser(Parser):
                 qm.pushQuadruple('=',exp,'','vControl')
             else:
                 print("error: type mismatch")
-    
+
     @_('')
     def nocondicional3(self,p):#punto 3
         expT = qm.popPilaT()
@@ -655,7 +655,6 @@ class BasicParser(Parser):
                 qm.resultAdd()
             else:
                 print("type mismatch")
-        
         return p
 
 
@@ -753,8 +752,6 @@ class BasicParser(Parser):
         qm.print()
         #area de tests
         #qm.verificarTiposOp("+",("int","float"))
-
-
         dir.borrar()
         return p
 

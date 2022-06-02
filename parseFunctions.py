@@ -73,7 +73,15 @@ class fundir(object):
             return False
 
     def print(self):
-        print(json.dumps(self.funDir,indent=2))
+        #print(json.dumps(self.funDir,indent=2))
+        for key, value in self.funDir.items():
+            print("------------------------")
+            print(key)
+            print('return: ',end='')
+            print(value[0])
+            for i in value[1]:
+                print(i,end=': ')
+                print(self.funDir[key][1][i])
 
 
 class printTest:
