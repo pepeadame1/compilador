@@ -22,6 +22,9 @@ class fundir(object):
     def addProgram(self,id):
         self.programName = id
         self.funDir["global"] = [["void",0],dict()]
+        self.funDir["principal"] = [["void",0],dict()]
+        self.funDir["const"] = [["void",0],dict()]
+        self.funDir["temp"] = [["void",0],dict()]
         self.paraTable = dict()
         self.currentScope = "global"
 
@@ -37,6 +40,9 @@ class fundir(object):
     def setreturn(self, regresa):
         self.currentScopeReturn = regresa
 
+    def getCurrentType(self):
+        return self.currentType
+
     def borrar(self):#aqui se borra todo
         self.funDir = dict()
 
@@ -50,12 +56,12 @@ class fundir(object):
             self.funDir[self.currentScope] = [[self.currentScopeReturn],dict()]
             self.paraTable[self.currentScope] = []
 
-    def agregarVariable(self, id):
+    def agregarVariable(self, id,adr):
         if id in self.funDir[self.currentScope][1]:#ya esta el id en la tabla
             print("error the id is already being used")
         else:
-            self.funDir[self.currentScope][1][id] = [self.currentType,"valor"]
-
+            self.funDir[self.currentScope][1][id] = [self.currentType,"valor",adr]
+            
    
     def agregarFunc(self, id):
         #self.currentScope = ""
@@ -73,7 +79,7 @@ class fundir(object):
         elif name in self.funDir["global"][1]:
             return self.funDir["global"][1][name][0]
     
-    def vairableExists(self,id):
+    def variableExists(self,id):
         if id in self.funDir[self.currentScope][1]:
             return True
         elif id in self.funDir["global"][1]:
@@ -82,8 +88,6 @@ class fundir(object):
             return False
 
     def addConst(self,tipo,val):
-        print("tipo snatoeuhanohuahtns")
-        print(tipo)
         if tipo == 'int':
             self.constTable[0][val] = "adress"
         elif tipo=='float':
@@ -95,6 +99,16 @@ class fundir(object):
         elif tipo=='dataframe':
             self.constTable[4][val] = "adress"
 
+    def returnAdr(self,id):
+        if self.variableExists(id):
+            if id in self.funDir[self.currentScope][1]:
+                #print("esto es lo que creo que se quiere sacar:")
+                #print(self.funDir[self.currentScope][1][id][2])
+                return self.funDir[self.currentScope][1][id][2]
+            elif id in self.funDir["global"][1]:
+                return self.funDir['global'][1][id][2]
+            else:
+                print("error")
 
     def validaConst(self,tipo,val):
         if tipo == 'int':
@@ -231,6 +245,12 @@ class fundir(object):
     def getQuadCounter(self):
         return self.funDir[self.newScope][0][3]
 
+    def getScope(self):
+        if self.currentScope == 'global':
+            return 'global'
+        else:
+            return 'local'
+
 class printTest:
     def __init__(self):
         print("test")
@@ -347,4 +367,102 @@ class quadrupleManager(object):
         print("------------------------")
 
         #print(json.dumps(self.quadruplos,indent=2))
+
+class MemoriaVirtual(object):
+
+
+
+    def __init__(self):
+        #rangos
+        #global
+        self.intG = 2500
+        self.floatG = 5000
+        self.charG = 7500
+        self.stringG = 10000
+        self.dataframeG = 12500
+        #local
+        self.intL = 15000
+        self.floatL = 17500
+        self.charL = 20000
+        self.stringL = 22500
+        self.dataframeL = 25000
+        #temp
+        self.intT = 27500
+        self.floatT = 30000
+        self.boolT = 32500
+        #const
+        self.intC = 35000
+        self.floatC = 37500
+        self.charC = 40000
+        self.stringC = 42500
+
+        #rangos de tipos
+        #orden = [global, local, temp, const]
+        self.intRango = [2500,15000,27500,3500]
+        self.floatRango = [5000,17500,30000,37500]
+        self.charRango = [7500,20000,-1,40000]
+        self.string = [10000,22500,-1,42500]
+        self.bool = [-1,-1,32500,-1]
+
+    
+    def addVar(self,tipo,scope):
+        if scope == 'global':
+            if tipo == 'int':
+                self.intG += 1
+                return self.intG-1
+            elif tipo == 'float':
+                self.floatG += 1
+                return self.floatG - 1
+            elif tipo == 'char':
+                self.charG += 1
+                return self.charG - 1
+            elif tipo == 'string':
+                self.stringG += 1
+                return self.stringG - 1
+        elif scope == 'local':
+            if tipo == 'int':
+                self.intL += 1
+                return self.intL-1
+            elif tipo == 'float':
+                self.floatL += 1
+                return self.floatL - 1
+            elif tipo == 'char':
+                self.charL += 1
+                return self.charL - 1
+            elif tipo == 'string':
+                self.stringL += 1
+                return self.stringL - 1
+        elif scope == 'temp':
+            if tipo == 'int':
+                self.intT += 1
+                return self.intT-1
+            elif tipo == 'float':
+                self.floatT += 1
+                return self.floatT - 1
+            elif tipo == 'bool':
+                self.boolT += 1
+                return self.boolT - 1
+        elif scope == 'const':
+            if tipo == 'int':
+                self.intC += 1
+                return self.intC-1
+            elif tipo == 'float':
+                self.floatC += 1
+                return self.floatC - 1
+            elif tipo == 'char':
+                self.charC += 1
+                return self.charC - 1
+            elif tipo == 'string':
+                self.stringC += 1
+                return self.stringC - 1
+        else:
+            return -1
+
+
+    def limpiaLocal(self):
+        self.intL = 15000
+        self.floatL = 17500
+        self.charL = 20000
+        self.stringL = 22500
+        self.dataframeL = 25000
 

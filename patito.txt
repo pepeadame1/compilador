@@ -21,7 +21,7 @@ var int i;
     }
 }
 
-funcion void yolo(int a, float j, dataframe big)
+funcion void yolo(int a, float j)
 var char y;
 int l;
 {
@@ -36,7 +36,7 @@ principal(){
     escribe("HOLA");
     escribe('c');
     f1 = 20.5;
-    yolo(i,f1,ash);
+    yolo(i,f1);
     mientras(i > 0) haz {
         escribe("test");
     }
