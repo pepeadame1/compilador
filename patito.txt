@@ -12,6 +12,7 @@ funcion int fact(int j, string k)
 var int i;
 {
     i = j + (p-j*2+j);
+    f1 = 2.0*1;
     si(j == 1) entonces{
         lee(i);
         i = 3;
@@ -33,10 +34,11 @@ principal(){
     fact(i,o);
     lee(p);
     escribe(p);
+    escribe(1+2);
     escribe("HOLA");
     escribe('c');
     f1 = 20.5;
-    yolo(i,f1);
+    yolo(5,f1);
     mientras(i > 0) haz {
         escribe("test");
     }

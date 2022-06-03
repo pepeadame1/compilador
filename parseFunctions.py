@@ -11,7 +11,8 @@ class fundir(object):
 
     def __init__(self):
         self.funDir = dict()
-        self.constTable = [dict(),dict(),dict(),dict(),dict()]#en orden [int,float,char,string,datafrome]
+        self.constTable = [dict(),dict(),dict(),dict()]#en orden [int,float,char,string]
+        self.tempTable = [dict(),dict(),dict()]#en orden son [int,float,bool]
         self.programName = ""
         self.currentScope = ""
         self.currentScopeReturn = ""
@@ -23,7 +24,6 @@ class fundir(object):
         self.programName = id
         self.funDir["global"] = [["void",0],dict()]
         self.funDir["principal"] = [["void",0],dict()]
-        self.funDir["const"] = [["void",0],dict()]
         self.funDir["temp"] = [["void",0],dict()]
         self.paraTable = dict()
         self.currentScope = "global"
@@ -87,28 +87,99 @@ class fundir(object):
         else:
             return False
 
-    def addConst(self,tipo,val):
+    def addConst(self,tipo,val,adr):
         if tipo == 'int':
-            self.constTable[0][val] = "adress"
+            self.constTable[0][val] = adr
         elif tipo=='float':
-            self.constTable[1][val] = "adress"
+            self.constTable[1][val] = adr
         elif tipo=='char':
-            self.constTable[2][val] = "adress"
+            self.constTable[2][val] = adr
         elif tipo=='string':
-            self.constTable[3][val] = "adress"
-        elif tipo=='dataframe':
-            self.constTable[4][val] = "adress"
+            self.constTable[3][val] = adr
+
+    def isConst(self,id,tipo):
+        if tipo == 'int':
+            if id in self.constTable[0]:
+                return True
+        elif tipo=='float':
+            if id in self.constTable[1]:
+                return True
+        elif tipo=='char':
+            if id in self.constTable[2]:
+                return True
+        elif tipo=='string':
+            if id in self.constTable[3]:
+                return True
+        return False
+
+    def isTemp(self,id,tipo):
+        if tipo == 'int':
+            if id in self.tempTable[0]:
+                return True
+        elif tipo=='float':
+            if id in self.tempTable[1]:
+                return True
+        elif tipo=='bool':
+            if id in self.tempTable[2]:
+                return True
+        return False
+
+    def addTemp(self,tipo,val,adr):
+        if tipo == 'int':
+            self.tempTable[0][val] = adr
+        elif tipo=='float':
+            self.tempTable[1][val] = adr
+        elif tipo=='bool':
+            self.tempTable[2][val] = adr
+        else:
+            print("error: se trato de guardar un temp que no es int,float o bool")
+
+    def borrarTemp(self):
+        self.tempTable = [dict(),dict(),dict()]
+    
+    def returnConst(self,id,tipo):
+        if tipo == 'int':
+            return self.constTable[0][id]
+        elif tipo=='float':
+            return self.constTable[1][id]
+        elif tipo=='char':
+            return self.constTable[2][id]
+        elif tipo=='string':
+            return self.constTable[3][id]
+        else:
+            return -1
+
+    def returnTemp(self,id,tipo):
+        if tipo == 'int':
+            return self.tempTable[0][id]
+        elif tipo=='float':
+            return self.tempTable[1][id]
+        elif tipo=='bool':
+            return self.tempTable[2][id]
+        else:
+            return -1
 
     def returnAdr(self,id):
         if self.variableExists(id):
             if id in self.funDir[self.currentScope][1]:
-                #print("esto es lo que creo que se quiere sacar:")
-                #print(self.funDir[self.currentScope][1][id][2])
                 return self.funDir[self.currentScope][1][id][2]
             elif id in self.funDir["global"][1]:
                 return self.funDir['global'][1][id][2]
             else:
                 print("error")
+
+    def returnAdrFull(self,id,tipo):#esta funcion regresa la direccion de memoria sin importar si es global,local,temporal o constante
+        #primero tratamos con local
+        print(self.currentScope)
+        if self.variableExists(id):
+            return self.returnAdr(id)
+        elif self.isTemp(id,tipo):
+            return self.returnTemp(id,tipo)
+        elif self.isConst(id,tipo):
+            return self.returnConst(id,tipo)
+        else:
+            return -1
+
 
     def validaConst(self,tipo,val):
         if tipo == 'int':
@@ -122,9 +193,6 @@ class fundir(object):
                 return True
         elif tipo=='string':
             if val in self.constTable[3]:
-                return True
-        elif tipo=='dataframe':
-            if val in self.constTable[4]:
                 return True
         else:
             return False
@@ -182,29 +250,44 @@ class fundir(object):
         print(self.paraTable)
 
     def printConst(self):
-        print(self.constTable)
+        #print(self.constTable)
+        print("CONST: ")
         print("----------")
-        print('int: ',end='')
+        print('int: ')
         for i in self.constTable[0]:
             print(i,end=', ')
-        print('')
-        print('float: ',end='')
+            print(self.constTable[0][i])
+        print('float: ')
         for i in self.constTable[1]:
-            print(i,end=', ')
-        print('')
-        print('char: ',end='')
+            print(i,end=': ')
+            print(self.constTable[1][i])
+        print('char: ')
         for i in self.constTable[2]:
-            print(i,end=', ')
-        print('')
-        print('string: ',end='')
+            print(i,end=': ')
+            print(self.constTable[2][i])
+        print('string: ')
         for i in self.constTable[3]:
-            print(i,end=', ')
-        print('')
-        print('dataframe: ',end='')
-        for i in self.constTable[4]:
-            print(i,end=', ')
-        print('')
+            print(i,end=': ')
+            print(self.constTable[3][i])
         print("----------")
+
+    def printTemp(self):
+        print("TEMP")
+        print("----------")
+        print('int:')
+        for i in self.tempTable[0]:
+            print(i,end=', ')
+            print(self.tempTable[0][i])
+        print('float:')
+        for i in self.tempTable[1]:
+            print(i,end=': ')
+            print(self.tempTable[1][i])
+        print('bool:')
+        for i in self.tempTable[2]:
+            print(i,end=': ')
+            print(self.tempTable[2][i])
+        print(print("----------"))
+
 
 
     def countParams(self):
@@ -337,7 +420,7 @@ class quadrupleManager(object):
         else:
             print("no hay valores en la pila de saltos")
     def resultCounter(self):
-        return self.resultI
+        return "t"+str(self.resultI)
 
     def resultAdd(self):
         self.resultI = self.resultI+1

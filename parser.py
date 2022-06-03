@@ -1,3 +1,4 @@
+from lib2to3.pgen2.token import RIGHTSHIFTEQUAL
 from sly import Parser
 from lexer import *
 from parseFunctions import *
@@ -193,8 +194,9 @@ class BasicParser(Parser):
     @_('')
     def funcs4(self,p):
         #dir.borrarScope()###############################################################
+        #dir.borrarTemp()################################################################
         qm.pushQuadruple("ENDFunc","","","")
-        dir.setAvail(qm.getAvail())
+
         mv.limpiaLocal()
         return p
 
@@ -257,7 +259,7 @@ class BasicParser(Parser):
         leftT = qm.popPilaT()
         tipoId = dir.getVariableType(p[0])
         if qm.verificarTiposOp('=',(leftT,tipoId)):
-            qm.pushQuadruple('=',leftO,"",dir.returnAdr(p[0]))
+            qm.pushQuadruple('=',dir.returnAdrFull(leftO,leftT),"",dir.returnAdr(p[0]))
         else:
             print("type mismatch")
         return p
@@ -296,7 +298,9 @@ class BasicParser(Parser):
         arg = qm.popPilaO()
         argT = qm.popPilaT()
         if dir.validaParam(argT):
-            qm.pushQuadruple("PARAMETER",dir.returnAdr(arg),"","param"+str(dir.getParamC()))
+            print("llega")
+            qm.pushQuadruple("PARAMETER",dir.returnAdrFull(arg,argT),"","param"+str(dir.getParamC()))
+            print("termina")
         else:
             exit()
         return p
@@ -309,7 +313,7 @@ class BasicParser(Parser):
     @_('')
     def void6(self,p):#nodo 5 y 6 de function call
         if dir.validaSize():
-            qm.pushQuadruple("GOSUB",dir.currentScope,"",dir.getQuadCounter())
+            qm.pushQuadruple("GOSUB",dir.currentScope,"",dir.getQuadCounter())#este es current scope o newscope?
         else:
             exit()
         return p
@@ -361,8 +365,11 @@ class BasicParser(Parser):
     def escritura4(self,p):#se crea el cuadruplo para escribir un string
         #print("si encontro el string")
         if not dir.validaConst('string',p[0]):
-            dir.addConst('string',p[0])
-        qm.pushQuadruple("ESCRIBE","","",dir.returnAdr(p[0]))
+            adr = mv.addVar('string','const')
+            dir.addConst('string',p[0],adr)
+        else:
+            adr = dir.returnConst(p[0],'string')
+        qm.pushQuadruple("ESCRIBE","","",adr)
 
     @_('expresion')
     def escritura3(self,p):#se crea el cuadruplo para escribir una expresion
@@ -370,7 +377,7 @@ class BasicParser(Parser):
         exp = qm.popPilaO()
         tipo = qm.popPilaT()
 
-        qm.pushQuadruple("ESCRIBE","","",dir.returnAdr(exp))
+        qm.pushQuadruple("ESCRIBE","","",dir.returnAdrFull(exp,tipo))
         return p
 
     
@@ -395,8 +402,10 @@ class BasicParser(Parser):
         leftT = qm.popPilaT()
         if qm.verificarTiposOp('<',(rightT,leftT)):#si es valido
             resultT = qm.regresaTipoCuboSemantico('<',(rightT,leftT))
-            qm.pushAvail(qm.resultCounter())
-            qm.pushQuadruple('<',leftO,rightO,qm.resultCounter())
+            #qm.pushAvail(qm.resultCounter())
+            adr = mv.addVar(resultT,'temp')
+            dir.addTemp(resultT,qm.resultCounter(),adr)
+            qm.pushQuadruple('<',dir.returnAdrFull(leftO,leftT),dir.returnAdrFull(rightO,rightT),qm.resultCounter())
             qm.pushPilaO(qm.resultCounter())
             qm.pushPilaT(resultT)
             qm.resultAdd()
@@ -412,8 +421,10 @@ class BasicParser(Parser):
         leftT = qm.popPilaT()
         if qm.verificarTiposOp('>=',(rightT,leftT)):#si es valido
             resultT = qm.regresaTipoCuboSemantico('>=',(rightT,leftT))
-            qm.pushAvail(qm.resultCounter())
-            qm.pushQuadruple('>=',leftO,rightO,qm.resultCounter())
+            #qm.pushAvail(qm.resultCounter())
+            adr = mv.addVar(resultT,'temp')
+            dir.addTemp(resultT,qm.resultCounter(),adr)
+            qm.pushQuadruple('>=',dir.returnAdrFull(leftO,leftT),dir.returnAdrFull(rightO,rightT),qm.resultCounter())
             qm.pushPilaO(qm.resultCounter())
             qm.pushPilaT(resultT)
             qm.resultAdd()
@@ -429,8 +440,10 @@ class BasicParser(Parser):
         leftT = qm.popPilaT()
         if qm.verificarTiposOp('<=',(rightT,leftT)):#si es valido
             resultT = qm.regresaTipoCuboSemantico('<=',(rightT,leftT))
-            qm.pushAvail(qm.resultCounter())
-            qm.pushQuadruple('<=',leftO,rightO,qm.resultCounter())
+            #qm.pushAvail(qm.resultCounter())
+            adr = mv.addVar(resultT,'temp')
+            dir.addTemp(resultT,qm.resultCounter(),adr)
+            qm.pushQuadruple('<=',dir.returnAdrFull(leftO,leftT),dir.returnAdrFull(rightO,rightT),qm.resultCounter())
             qm.pushPilaO(qm.resultCounter())
             qm.pushPilaT(resultT)
             qm.resultAdd()
@@ -446,8 +459,10 @@ class BasicParser(Parser):
         leftT = qm.popPilaT()
         if qm.verificarTiposOp('>',(rightT,leftT)):#si es valido
             resultT = qm.regresaTipoCuboSemantico('>',(rightT,leftT))
-            qm.pushAvail(qm.resultCounter())
-            qm.pushQuadruple('>',leftO,rightO,qm.resultCounter())
+            #qm.pushAvail(qm.resultCounter())
+            adr = mv.addVar(resultT,'temp')
+            dir.addTemp(resultT,qm.resultCounter(),adr)
+            qm.pushQuadruple('>',dir.returnAdrFull(leftO,leftT),dir.returnAdrFull(rightO,rightT),adr)
             qm.pushPilaO(qm.resultCounter())
             qm.pushPilaT(resultT)
             qm.resultAdd()
@@ -467,8 +482,10 @@ class BasicParser(Parser):
         leftT = qm.popPilaT()
         if qm.verificarTiposOp('==',(rightT,leftT)):#si es valido
             resultT = qm.regresaTipoCuboSemantico('==',(rightT,leftT))
-            qm.pushAvail(qm.resultCounter())
-            qm.pushQuadruple('==',leftO,rightO,qm.resultCounter())
+            #qm.pushAvail(qm.resultCounter())
+            adr = mv.addVar(resultT,'temp')
+            dir.addTemp(resultT,qm.resultCounter(),adr)
+            qm.pushQuadruple('==',dir.returnAdrFull(leftO,leftT),dir.returnAdrFull(rightO,rightT),adr)
             qm.pushPilaO(qm.resultCounter())
             qm.pushPilaT(resultT)
             qm.resultAdd()
@@ -499,7 +516,9 @@ class BasicParser(Parser):
             print("tipos de datos no iguales")
         else:
             exp = qm.popPilaO()
-            qm.pushQuadruple("GotoF",exp,"","")
+            print("decision1--------------------")
+            print(exp)
+            qm.pushQuadruple("GotoF",dir.returnAdrFull(exp,tipo),"","")
             cont = qm.quadCount()
             qm.pushPSaltos(cont-1)
         return p
@@ -529,7 +548,7 @@ class BasicParser(Parser):
         expT = qm.popPilaT()
         if expT == "bool":
             result = qm.popPilaO()
-            qm.pushQuadruple("GotoF",result,"","")
+            qm.pushQuadruple("GotoF",dir.returnAdrFull(result,expT),"","")
             qm.pushPSaltos(qm.quadCount()-1)
         else:
             print("error")
@@ -564,7 +583,7 @@ class BasicParser(Parser):
             exp = qm.popPilaO()
             vControl = exp
             if qm.verificarTiposOp('=',(expT,qm.pilaT[-1])):
-                qm.pushQuadruple('=',exp,'','vControl')
+                qm.pushQuadruple('=',dir.returnAdrFull(exp,expT),'','vControl')
             else:
                 print("error: los tipos de variable no son iguales")
 
@@ -573,8 +592,8 @@ class BasicParser(Parser):
         expT = qm.popPilaT()
         if expT == 'int' or expT == 'float':
             exp = qm.popPilaO()
-            qm.pushQuadruple('=',exp,'','vFinal')
-            qm.pushQuadruple('<','vControl','vFinal','Tx')
+            qm.pushQuadruple('=',dir.returnAdrFull(exp,expT),'','vFinal')
+            qm.pushQuadruple('<','vControl','vFinal','Tx')#este ex debe de ser un booleano temporal
             qm.pushPSaltos(qm.quadCount()-1)
             qm.pushQuadruple('GotoF','Tx','','')
             qm.pushPSaltos(qm.quadCount()-1)
@@ -583,9 +602,9 @@ class BasicParser(Parser):
 
     @_('')
     def nocondicional4(self,p):#punto 4
-        qm.pushQuadruple('+','vControl',1,'Ty')
+        qm.pushQuadruple('+','vControl',1,'Ty')#se tiene que agregar un 1 como const por default?
         qm.pushQuadruple('=','Ty','','vControl')
-        qm.pushQuadruple('=','Ty','',qm.pilaO[-1])
+        qm.pushQuadruple('=','Ty','',dir.returnAdrFull(qm.pilaO[-1],qm.pilaT[-1]))
         fin = qm.popPSaltos()
         ret = qm.popPSaltos()
         qm.pushQuadruple('GOTO','','',ret)
@@ -608,7 +627,9 @@ class BasicParser(Parser):
             if qm.verificarTiposOp(operator,(rightType,leftType)):
                 resultT = qm.regresaTipoCuboSemantico(operator,(rightType,leftType))
                 qm.pushAvail(qm.resultCounter())
-                qm.pushQuadruple(operator,leftO,rightO,qm.resultCounter())#falta entender result
+                adr = mv.addVar(resultT,'temp')
+                dir.addTemp(resultT,qm.resultCounter(),adr)
+                qm.pushQuadruple(operator,dir.returnAdrFull(leftO,leftType),dir.returnAdrFull(rightO,rightType),adr)#falta entender result
                 qm.pushPilaO(qm.resultCounter())#falta entender result
                 qm.pushPilaT(resultT)
                 qm.resultAdd()
@@ -626,8 +647,10 @@ class BasicParser(Parser):
             operator = qm.popPOper()
             if qm.verificarTiposOp(operator,(rightType,leftType)):
                 resultT = qm.regresaTipoCuboSemantico(operator,(rightType,leftType))
-                qm.pushAvail(qm.resultCounter())
-                qm.pushQuadruple(operator,leftO,rightO,qm.resultCounter())#falta entender result
+                #qm.pushAvail(qm.resultCounter())
+                adr = mv.addVar(resultT,'temp')
+                dir.addTemp(resultT,qm.resultCounter(),adr)
+                qm.pushQuadruple(operator,dir.returnAdrFull(leftO,leftType),dir.returnAdrFull(rightO,rightType),adr)#falta entender result
                 qm.pushPilaO(qm.resultCounter())#falta entender result
                 qm.pushPilaT(resultT)
                 qm.resultAdd()
@@ -703,8 +726,7 @@ class BasicParser(Parser):
         qm.pushPilaO(p[0])
         qm.pushPilaT('int')
         if not dir.validaConst('int',p[0]):
-            
-            dir.addConst('int',p[0])
+            dir.addConst('int',p[0],mv.addVar('int','const'))
         return p
 
     @_('CTEFLOAT')
@@ -712,7 +734,7 @@ class BasicParser(Parser):
         qm.pushPilaO(p[0])
         qm.pushPilaT('float')
         if not dir.validaConst('float',p[0]):
-            dir.addConst('float',p[0])
+            dir.addConst('float',p[0],mv.addVar('float','const'))
         return p
 
     @_('CTESTRING')
@@ -720,7 +742,7 @@ class BasicParser(Parser):
         qm.pushPilaO(p[0])
         qm.pushPilaT('string')
         if not dir.validaConst('string',p[0]):
-            dir.addConst('string',p[0])
+            dir.addConst('string',p[0],mv.addVar('string','const'))
         return p
 
     @_('CTECHAR')
@@ -728,7 +750,7 @@ class BasicParser(Parser):
         qm.pushPilaO(p[0])
         qm.pushPilaT('char')
         if not dir.validaConst('char',p[0]):
-            dir.addConst('char',p[0])
+            dir.addConst('char',p[0],mv.addVar('char','const'))
         return p
 
 
@@ -740,6 +762,7 @@ class BasicParser(Parser):
         #dir.test()
         qm.print()
         dir.printParams()
+        dir.printTemp()
         #area de tests
         #qm.verificarTiposOp("+",("int","float"))
         dir.printConst()
