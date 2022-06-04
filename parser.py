@@ -743,6 +743,44 @@ class BasicParser(Parser):
         qm.pushPilaT(dir.getVariableType(p[0]))
         return p
 
+    @_('varctehelperi vararr')
+    def varcte(self,p):
+        return p
+
+    @_('vararr3 vararr2 ')
+    def vararr(self,p):
+        return p
+    
+    @_('CTEINT vararr4 "]" "[" CTEINT "]"')
+    def vararr2(self,p):
+        return p
+
+    @_('CTEINT vararr4 "]"')
+    def vararr2(self,p):
+        return p
+
+    @_('"["')
+    def vararr3(self,p):#este es el punto 2 de array access
+        id = qm.popPilaO()
+        type = qm.popPilaT()
+        if dir.verifyDim(id):
+            dim = 1
+            #qm.pushPilaDim(,)
+            qm.pushPOper('[')
+        return p
+
+    @_('')
+    def vararr4(self,p):#este es el punt 3 de array access
+        id = qm.popPilaO()
+        qm.pushPilaO(id)
+        qm.pushQuadruple("verify",qm.topPilaO(),0,dir.getLsDim(id))
+
+    @_('ID')#punto 1 de array access
+    def varctehelperi(self,p):
+        qm.pushPilaO(p[0])
+        qm.pushPilaT(dir.getVariableType(p[0]))
+        return p
+
     @_('CTEINT')
     def varcte(self,p):
         qm.pushPilaO(p[0])

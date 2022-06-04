@@ -24,6 +24,7 @@ var int i;
 
 funcion void yolo(int a, float j)
 var char y;
+int arryolo[10];
 int l;
 {
     lee(y);
@@ -34,9 +35,9 @@ principal(){
     fact(i,o);
     lee(p);
     escribe(p);
-    escribe(1+2);
     escribe("HOLA");
     escribe('c');
+    escribe(Arreglo[1]);
     f1 = 20.5;
     yolo(5,f1);
     mientras(i > 0) haz {

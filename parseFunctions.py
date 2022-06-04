@@ -80,7 +80,7 @@ class fundir(object):
 
     def arrCalc(self, id):
         count = self.funDir[self.currentScope][1][id][3][0]
-        self.funDir[self.currentScope][1][id][3][0] = 1
+        self.funDir[self.currentScope][1][id][3][0] = 0
         r = self.funDir[self.currentScope][1][id][3][1]
         k = 0
         size = r
@@ -102,7 +102,22 @@ class fundir(object):
         print("DESPUES DE CALCULO")
         print(self.funDir[self.currentScope][1][id][2])
 
-   
+
+    def verifyDim(self,id):
+        if self.variableExists(id):#primero ver si hay en local
+            #print(self.funDir['global'][1][id][3])
+            if id in self.funDir[self.currentScope][1]:
+                print("verify dimsanhtoeunsaoehuansoteuhatoheuaotnus")
+                #print(self.funDir[self.currentScope][1][id][3][2])
+                if len(self.funDir[self.currentScope][1][id][3][2]) > 0:
+                    return True
+            elif id in self.funDir['global'][1]:
+                
+                if len(self.funDir['global'][1][id][3][2]) > 0:
+                    return True
+        return False
+
+    
     def agregarFunc(self, id):
         #self.currentScope = ""
         #self.currentScopeReturn = ""
@@ -220,6 +235,14 @@ class fundir(object):
         else:
             return -1
 
+    def getLsDim(self,id):
+        if self.variableExists(id):
+            if id in self.funDir[self.currentScope][1]:
+                return self.funDir[self.currentScope][1][id][3][2][1]
+            elif id in self.funDir["global"][1]:
+                return self.funDir["global"][1][id][3][2][1]
+            else:
+                print("error")
 
     def validaConst(self,tipo,val):
         if tipo == 'int':
@@ -386,6 +409,7 @@ class quadrupleManager(object):
         self.quadruplos = []#pila de quadruplos
         self.resultI = 0 #para tener el index de t1,t2
         self.pSaltos = []#pila de saltos
+        self.pilaDim = []#pila de dimensiones de arreglo
 
         self.cubosemantico = {'=':{('int','int'): 'int',('float','float'): 'float', ('char','char'):'char'},
         '-':{('int','int'): 'int', ('float','float'):'float',('int','float'): 'float', ('float','int'):'float'},
@@ -424,6 +448,15 @@ class quadrupleManager(object):
     def pushPilaT(self,x):
         self.pilaT.append(x)
 
+    def pushPilaDim(self,x):
+        self.pilaDim.append(x)
+
+    def popPilaDim(self,x):
+        if self.pilaDim:
+            return self.pilaDim.pop()
+        else:
+            print('ya no hay valores en piladim')
+
     def popPilaT(self):
         if self.pilaT:
             return self.pilaT.pop()
@@ -442,6 +475,10 @@ class quadrupleManager(object):
     def topPOper(self):
         if self.POper:
             return self.POper[-1]
+
+    def topPilaO(self):
+        if self.pilaO:
+            return self.pilaO[-1]
 
     def pushAvail(self,x):
         self.avail.append(x)
