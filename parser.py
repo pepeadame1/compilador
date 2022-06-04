@@ -70,15 +70,14 @@ class BasicParser(Parser):
     @_('tipo var3 ";"')
     def var2(self,p):
         dir.countLocalVar()
-        dir.setQuadCounter(qm.quadCount())
-        
+        dir.setQuadCounter(qm.quadCount()) 
         return p
 
-    @_('ID "[" CTEINT "]"')#aqui notar que es un arreglo
+    @_('varhelp2 "["  var4 arrCalc')#aqui notar que es un arreglo
     def var3(self,p):
         return p
 
-    @_('ID "[" CTEINT "]" "," var3')#aqui notar que es un arreglo
+    @_('varhelp2 "[" var4 arrCalc "," var3')#aqui notar que es un arreglo
     def var3(self,p):
         return p
 
@@ -90,12 +89,24 @@ class BasicParser(Parser):
     def var3(self,p):
         return p
 
+    @_('CTEINT "]" "[" CTEINT "]"')
+    def var4(self,p):
+        dir.addLimite(dir.auxArrId, p[0])
+        dir.addLimite(dir.auxArrId, p[3])
+        return p
+
+    @_('CTEINT "]"')
+    def var4(self,p):
+        dir.addLimite(dir.auxArrId, p[0])
+        return p
+
     @_('ID ","')
     def varhelp(self,p):
         #print(dir.getScope())
         #print(mv.addVar(dir.getCurrentType(),dir.getScope()))
         #dir.agregarVariable(mv.addVar(dir.getCurrentType(),dir.getScope()))
         dir.agregarVariable(p[0],mv.addVar(dir.getCurrentType(),dir.getScope()))
+        return p
 
     @_('ID')
     def varhelp(self,p):
@@ -103,7 +114,18 @@ class BasicParser(Parser):
         #dir.agregarVariable(mv.addVar(dir.getCurrentType(),dir.getScope()))
         dir.agregarVariable(p[0],mv.addVar(dir.getCurrentType(),dir.getScope()))
         return p
+
+    @_('ID')
+    def varhelp2(self,p):
+        dir.agregarVariable(p[0],mv.addVar(dir.getCurrentType(),dir.getScope()))
+        dir.auxArrId = p[0]
+        dir.setArreglo(dir.auxArrId)
+        return p
         
+    @_('')
+    def arrCalc(self,p):
+        dir.arrCalc(dir.auxArrId)
+        return p
 
     @_('INT')
     def tipo(self,p):

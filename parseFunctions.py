@@ -1,5 +1,6 @@
 from inspect import _void
 from itertools import count
+from re import M
 from textwrap import indent
 import json
 from unittest import result
@@ -19,6 +20,7 @@ class fundir(object):
         self.newScope = ""
         self.currentType = ""
         self.paramC = 0
+        self.auxArrId = ""
 
     def addProgram(self,id):
         self.programName = id
@@ -60,8 +62,46 @@ class fundir(object):
         if id in self.funDir[self.currentScope][1]:#ya esta el id en la tabla
             print("error the id is already being used")
         else:
-            self.funDir[self.currentScope][1][id] = [self.currentType,"valor",adr]
-            
+            self.funDir[self.currentScope][1][id] = [self.currentType,"valor",adr, []]
+
+    def setArreglo(self,id):
+        self.funDir[self.currentScope][1][id][3] = [0, 1, []] # dim, r, [lim inf, lim sup, m/k]
+    
+    def addLimite(self, id, limite):
+        if(int(limite) < 1):
+            print("error limite debe ser mayor a 0")
+        
+        else:
+            self.funDir[self.currentScope][1][id][3][2].append([0, int(limite), 0])
+            self.funDir[self.currentScope][1][id][3][1] = (int(limite) + 1) * self.funDir[self.currentScope][1][id][3][1]
+            self.funDir[self.currentScope][1][id][3][0] = self.funDir[self.currentScope][1][id][3][0] + 1
+            print("SI SE PUEDE")
+            print(self.funDir[self.currentScope][1][id][3])
+
+    def arrCalc(self, id):
+        count = self.funDir[self.currentScope][1][id][3][0]
+        self.funDir[self.currentScope][1][id][3][0] = 1
+        r = self.funDir[self.currentScope][1][id][3][1]
+        k = 0
+        size = r
+        i = 0
+        while i < count:
+            m = r / (self.funDir[self.currentScope][1][id][3][2][i][1] + 1)
+            self.funDir[self.currentScope][1][id][3][2][i][2] = m
+            r = m
+            print("aaaaaaAAAAAAAaaaaaaa")
+            print(self.funDir[self.currentScope][1][id][3][2][i][2])
+            k = k + self.funDir[self.currentScope][1][id][3][2][i][0] * m
+        
+            self.funDir[self.currentScope][1][id][3][0] = self.funDir[self.currentScope][1][id][3][0] + 1
+            i = i + 1
+        self.funDir[self.currentScope][1][id][3][2][i - 1][2] = k
+
+        self.auxArrId = ""
+        self.funDir[self.currentScope][1][id][2] = self.funDir[self.currentScope][1][id][2] + self.funDir[self.currentScope][1][id][3][1]
+        print("DESPUES DE CALCULO")
+        print(self.funDir[self.currentScope][1][id][2])
+
    
     def agregarFunc(self, id):
         #self.currentScope = ""
@@ -234,7 +274,7 @@ class fundir(object):
             return False
 
     ########################################################
-
+    
     def print(self):
         #print(json.dumps(self.funDir,indent=2))
         for key, value in self.funDir.items():
@@ -287,8 +327,6 @@ class fundir(object):
             print(i,end=': ')
             print(self.tempTable[2][i])
         print(print("----------"))
-
-
 
     def countParams(self):
         lenght = len(self.paraTable[self.currentScope])
