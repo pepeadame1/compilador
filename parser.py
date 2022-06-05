@@ -1,11 +1,12 @@
-from lib2to3.pgen2.token import RIGHTSHIFTEQUAL
 from sly import Parser
 from lexer import *
 from parseFunctions import *
+from maquinavirtual import *
 
 dir = fundir()
 qm = quadrupleManager()
 mv = MemoriaVirtual()
+
 
 class BasicParser(Parser):
     tokens = BasicLexer.tokens
@@ -17,11 +18,15 @@ class BasicParser(Parser):
 
     @_('catcherprograma ";" programa')
     def preprograma(self,p):
+        print("fin de parser")
+        maqVirt = maquinavirtual(dir.exportFundir(),dir.exportConst(),dir.exportTemp(),qm.returnQuadruplos())
+        maqVirt.correrPrograma()
         return p
 
     @_("PROGRAMA ID")
     def catcherprograma(self,p):
         dir.addProgram(p[1])
+        qm.pushQuadruple("GOTO","","","principal")
         return p
 
 
@@ -36,6 +41,7 @@ class BasicParser(Parser):
     @_('')
     def contextoprograma(self,p):
         dir.setscope('principal')
+        qm.setQuadValuePrincipal()
         return p
 
     @_('vars programa3')
@@ -788,5 +794,8 @@ class BasicParser(Parser):
         #area de tests
         #qm.verificarTiposOp("+",("int","float"))
         dir.printConst()
-        dir.borrar()
+        dir.exportConst()
+        dir.exportTemp()
+        dir.exportFundir()
+        #dir.borrar()
         return p

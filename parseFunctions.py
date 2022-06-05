@@ -26,7 +26,7 @@ class fundir(object):
         self.programName = id
         self.funDir["global"] = [["void",0],dict()]
         self.funDir["principal"] = [["void",0],dict()]
-        self.funDir["temp"] = [["void",0],dict()]
+        #self.funDir["temp"] = [["void",0],dict()]
         self.paraTable = dict()
         self.currentScope = "global"
 
@@ -372,6 +372,40 @@ class fundir(object):
         else:
             return 'local'
 
+    def exportFundir(self):
+        exitT = dict()
+        for x in self.funDir:
+            #print(x)
+            exitT[x] = [self.funDir[x][0],dict()]
+            for i in self.funDir[x][1]:
+                exitT[x][1][self.returnAdr(i)] = self.funDir[x][1][i]
+        #print(exitT)
+        return exitT
+
+    def exportConst(self):
+        exit = [dict(),dict(),dict(),dict()]
+        for i in self.constTable[0]:#int
+            exit[0][self.constTable[0][i]] = i
+        for i in self.constTable[1]:#int
+            exit[1][self.constTable[1][i]] = i
+        for i in self.constTable[2]:#int
+            exit[2][self.constTable[2][i]] = i
+        for i in self.constTable[3]:#int
+            exit[3][self.constTable[3][i]] = i
+        #print(exit)
+        return exit
+
+    def exportTemp(self):
+        exit = [dict(),dict(),dict()]
+        for i in self.tempTable[0]:#int
+            exit[0][self.tempTable[0][i]] = 0
+        for i in self.tempTable[1]:#float
+            exit[1][self.tempTable[1][i]] = 0.0
+        for i in self.tempTable[2]:#bool
+            exit[2][self.tempTable[2][i]] = True
+        #print(exit)
+        return exit
+
 class printTest:
     def __init__(self):
         print("test")
@@ -475,6 +509,13 @@ class quadrupleManager(object):
     def getAvail(self):
         return self.avail
 
+    def setQuadValuePrincipal(self):#encuentra el quadruplo donde empieza principal() y actualiza el goto inicial
+        print('llega')
+        self.quadruplos[0][3] = self.quadCount()
+
+    def returnQuadruplos(self):
+        return self.quadruplos
+
     def print(self):
         x = 0
         for i in self.quadruplos:
@@ -496,26 +537,26 @@ class MemoriaVirtual(object):
     def __init__(self):
         #rangos
         #global
-        self.intG = 2500
-        self.floatG = 5000
-        self.charG = 7500
-        self.stringG = 10000
-        self.dataframeG = 12500
+        self.intG = 0
+        self.floatG = 2500
+        self.charG = 5000
+        self.stringG = 7500
+        self.dataframeG = 10000
         #local
-        self.intL = 15000
-        self.floatL = 17500
-        self.charL = 20000
-        self.stringL = 22500
-        self.dataframeL = 25000
+        self.intL = 12500
+        self.floatL = 15000
+        self.charL = 17500
+        self.stringL = 20000
+        self.dataframeL = 22500
         #temp
-        self.intT = 27500
-        self.floatT = 30000
-        self.boolT = 32500
+        self.intT = 25000
+        self.floatT = 27500
+        self.boolT = 30000
         #const
-        self.intC = 35000
-        self.floatC = 37500
-        self.charC = 40000
-        self.stringC = 42500
+        self.intC = 32500
+        self.floatC = 35000
+        self.charC = 37500
+        self.stringC = 40000
 
         #rangos de tipos
         #orden = [global, local, temp, const]

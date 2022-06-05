@@ -31,6 +31,7 @@ int l;
 
 
 principal(){
+    i = 5+3;
     fact(i,o);
     lee(p);
     escribe(p);
@@ -41,6 +42,7 @@ principal(){
     yolo(5,f1);
     mientras(i > 0) haz {
         escribe("test");
+        i = i-1;
     }
 
     desde i = 12 hasta 10 hacer{
