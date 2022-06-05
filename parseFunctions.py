@@ -420,6 +420,7 @@ class quadrupleManager(object):
         self.quadruplos = []#pila de quadruplos
         self.resultI = 0 #para tener el index de t1,t2
         self.pSaltos = []#pila de saltos
+        self.pilaControl = []#pila para guardar adr de vControl
 
         self.cubosemantico = {'=':{('int','int'): 'int',('float','float'): 'float', ('char','char'):'char'},
         '-':{('int','int'): 'int', ('float','float'):'float',('int','float'): 'float', ('float','int'):'float'},
@@ -476,6 +477,13 @@ class quadrupleManager(object):
     def topPOper(self):
         if self.POper:
             return self.POper[-1]
+
+    def pushPcontrol(self,x):
+        self.pilaControl.append(x)
+
+    def popPcontrol(self):
+        if self.pilaControl:
+            return self.pilaControl.pop()
 
     def pushAvail(self,x):
         self.avail.append(x)

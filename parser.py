@@ -27,6 +27,7 @@ class BasicParser(Parser):
     def catcherprograma(self,p):
         dir.addProgram(p[1])
         qm.pushQuadruple("GOTO","","","principal")
+        dir.addConst('int',1,mv.addVar('int','const'))
         return p
 
 
@@ -606,12 +607,19 @@ class BasicParser(Parser):
 
     @_('')
     def nocondicional2(self,p):#punto 2
+        print('punto 2')
         expT = qm.popPilaT()
         if expT == 'int' or expT == 'float':
             exp = qm.popPilaO()
-            vControl = exp
+            vControl = qm.pilaO[-1]
+            adr = mv.addVar(qm.pilaT[-1],'temp')
+            #hacer vControl su propia variable
+            dir.addTemp(qm.pilaT[-1],qm.resultCounter(),adr)
+            qm.resultAdd()
+            qm.pushPcontrol(adr)
             if qm.verificarTiposOp('=',(expT,qm.pilaT[-1])):
-                qm.pushQuadruple('=',dir.returnAdrFull(exp,expT),'','vControl')
+                qm.pushQuadruple('=',dir.returnAdrFull(exp,expT),'',dir.returnAdrFull(vControl,'int'))
+                qm.pushQuadruple('=',dir.returnAdrFull(exp,expT),'',adr)
             else:
                 print("error: los tipos de variable no son iguales")
 
@@ -620,19 +628,32 @@ class BasicParser(Parser):
         expT = qm.popPilaT()
         if expT == 'int' or expT == 'float':
             exp = qm.popPilaO()
-            qm.pushQuadruple('=',dir.returnAdrFull(exp,expT),'','vFinal')
-            qm.pushQuadruple('<','vControl','vFinal','Tx')#este ex debe de ser un booleano temporal
+            adr = mv.addVar(expT,'temp')
+            dir.addTemp(expT,qm.resultCounter(),adr)
+            qm.resultAdd()
+            vControl = qm.popPcontrol()
+            qm.pushQuadruple('=',dir.returnAdrFull(exp,expT),'',adr)
+            adrBool = mv.addVar('bool','temp')
+            dir.addTemp('bool',qm.resultCounter(),adrBool)
+            qm.resultAdd()
+            qm.pushQuadruple('<',vControl,adr,adrBool)#este ex debe de ser un booleano temporal
             qm.pushPSaltos(qm.quadCount()-1)
-            qm.pushQuadruple('GotoF','Tx','','')
+            qm.pushQuadruple('GotoF',adrBool,'','')
             qm.pushPSaltos(qm.quadCount()-1)
+            qm.pushPcontrol(vControl)
+            
         else:
             print("error: los tipos de variable no son iguales")
 
     @_('')
     def nocondicional4(self,p):#punto 4
-        qm.pushQuadruple('+','vControl',1,'Ty')#se tiene que agregar un 1 como const por default?
-        qm.pushQuadruple('=','Ty','','vControl')
-        qm.pushQuadruple('=','Ty','',dir.returnAdrFull(qm.pilaO[-1],qm.pilaT[-1]))
+        vControl = qm.popPcontrol()
+        adrBool = mv.addVar('int','temp')
+        dir.addTemp('int',qm.resultCounter(),adrBool)
+        qm.resultAdd()
+        qm.pushQuadruple('+',vControl,dir.returnAdrFull(1,'int'),adrBool)#se tiene que agregar un 1 como const por default?
+        qm.pushQuadruple('=',adrBool,'',vControl)
+        qm.pushQuadruple('=',adrBool,'',dir.returnAdrFull(qm.pilaO[-1],qm.pilaT[-1]))
         fin = qm.popPSaltos()
         ret = qm.popPSaltos()
         qm.pushQuadruple('GOTO','','',ret)

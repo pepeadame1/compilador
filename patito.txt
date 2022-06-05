@@ -45,8 +45,8 @@ principal(){
         i = i-1;
     }
 
-    desde i = 12 hasta 10 hacer{
-        lee(j);
+    desde i = 3 hasta 10 hacer{
+        escribe(i);
     }
 
     j = p*2;

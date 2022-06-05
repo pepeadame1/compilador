@@ -22,10 +22,10 @@ class maquinavirtual(object):
         print(indexFinal)
         while self.pointer < indexFinal:
 
-            print('quadruplo: ',end='')
-            print(self.pointer)
-            print('operacion: ',end='')
-            print(self.quadruplos[self.pointer])
+            #print('quadruplo: ',end='')
+            #print(self.pointer)
+            #print('operacion: ',end='')
+            #print(self.quadruplos[self.pointer])
 
             self.isJumping = False
             quad = self.quadruplos[self.pointer]
@@ -47,11 +47,11 @@ class maquinavirtual(object):
                 leftO = self.regresaValor(quad[1])
                 rightO = self.regresaValor(quad[2])
                 op = quad[0]
-                print(f'{leftO} {op} {rightO}')
+                #print(f'{leftO} {op} {rightO}')
                 ans = eval(f'{leftO} {op} {rightO}')
-                print('operacion booleana')
-                print(ans)
-                self.guardarValor(quad[3],self.regresaValor(ans))
+                #print('operacion booleana')
+                #print(ans)
+                self.guardarValor(quad[3],ans)
             elif quad[0] == '=':
                 self.guardarValor(quad[3],self.regresaValor(quad[1]))
             elif quad[0] == 'LEE':
@@ -134,9 +134,9 @@ class maquinavirtual(object):
             print('no se encontro la variable')
 
     def guardarValor(self,dir,valor):
-        print('guardar valor')
-        print(dir)
-        print(valor)
+        #print('guardar valor')
+        #print(dir)
+        #print(valor)
         if dir >= 0 and dir < 12500:#variable global
             self.funDir['global'][1][dir][1] = valor
         elif dir >= 12500 and dir < 25000:#local
