@@ -88,7 +88,7 @@ class maquinavirtual(object):
                 print('')
             elif quad[0] == 'ENDFunc':
                 self.pointer = self.historialPointer.pop()
-                
+                self.saleFuncion()
             if not self.isJumping:
                 self.pointer += 1
 
@@ -120,7 +120,9 @@ class maquinavirtual(object):
 
     def lectura(self,dir):
         val = input(">")
+        print(dir)
         tipo = self.regresaTipo(dir)
+        
         try:
             if tipo == 'int':
                 val = int(val)
@@ -142,7 +144,16 @@ class maquinavirtual(object):
         if dir >= 0 and dir < 12500:#variable global
             return self.funDir['global'][1][dir][0]
         elif dir >= 12500 and dir < 25000:#local
-            return self.funDir[self.currentScope][1][dir][0]
+            if dir >= 12500 and dir < 15000:#int
+                return 'int'
+            elif dir>=15000 and dir < 17500:#float
+                return 'float'
+            elif dir>=17500 and dir < 20000:#char
+                return 'char'
+            elif dir>=20000 and dir < 22500:#string
+                return 'string'
+            elif dir>=22500 and dir < 25000:#dataframe
+                return 'dataframe'
         elif dir >= 25000 and dir < 32500:#temp
             if dir >= 2500 and dir < 27500:#int
                 return 'int'
