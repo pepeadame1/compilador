@@ -6,7 +6,8 @@ if __name__ == '__main__':
     parser = BasicParser()
     env = {}
 
-    f = open('patito.txt','r')
+    #f = open('patito.txt','r')
+    f = open('patitobackup.txt','r')
     text = str(f.read())
 
     try:

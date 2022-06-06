@@ -6,6 +6,7 @@ class maquinavirtual(object):
         self.pointer = 0
         self.historialPointer = []
         self.currentScope = 'principal'
+        self.siguienteScope = ''
         self.currentScopeReturn = ''
         self.funDir = funDirT
         self.paramT = paramT
@@ -61,10 +62,10 @@ class maquinavirtual(object):
                 leftO = self.regresaValor(quad[1])
                 rightO = self.regresaValor(quad[2])
                 op = quad[0]
-                #print(f'{leftO} {op} {rightO}')
+                print(f'{leftO} {op} {rightO}')
                 ans = eval(f'{leftO} {op} {rightO}')
-                #print('operacion booleana')
-                #print(ans)
+                print('operacion booleana')
+                print(ans)
                 self.guardarValor(quad[3],ans)
             elif quad[0] == '=':
                 self.guardarValor(quad[3],self.regresaValor(quad[1]))
@@ -73,13 +74,15 @@ class maquinavirtual(object):
             elif quad[0] == 'ESCRIBE':
                 print(self.regresaValor(quad[3]))#no quitar este
             elif quad[0] == 'ERA':
-                self.currentScope = quad[3]
-                self.nuevoTamanoFunc(quad[3])
+                self.siguienteScope = quad[3]
                 self.params = []
+                self.nuevoTamanoFunc(quad[3])
             elif quad[0] == 'PARAMETER':
                 self.params.append(self.regresaValor(quad[1]))
                 #self.guardaValorL(quad[1],self.regresaValor(quad[1]))
             elif quad[0] == 'GOSUB':
+                self.currentScope = self.siguienteScope
+                self.aplicarTamanoFunc()
                 self.guardaParams()
                 #print('llega')
                 self.historialPointer.append(self.pointer)#se guarda aqui o en el gosub?
@@ -95,32 +98,43 @@ class maquinavirtual(object):
 
     def regresaValor(self,dir):
         #print(self.temp)
+        print('regresa valor')
+        print(dir)
         if dir >= 0 and dir < 12500:#variable global
+            print(self.funDir['global'][1][dir][1])
             return self.funDir['global'][1][dir][1]
         elif dir >= 12500 and dir < 25000:#local
+            print(self.regresaValorL(dir))
             return self.regresaValorL(dir)
         elif dir >= 25000 and dir < 32500:#temp
             if dir >= 2500 and dir < 27500:#int
+                print(self.temp[0][dir])
                 return self.temp[0][dir]
             elif dir >= 27500 and dir < 30000:#float
+                print(self.temp[1][dir])
                 return self.temp[1][dir]
             else:#bool
+                print(self.temp[2][dir])
                 return self.temp[2][dir]
         elif dir >= 32500 and dir < 42500:#const
             if dir >= 32500 and dir < 35000:#int
+                print(self.const[0][dir])
                 return self.const[0][dir]
             elif dir >= 35000 and dir < 37500:#float
+                print(self.const[1][dir])
                 return self.const[1][dir]
             elif dir >= 37500 and dir < 40000:#char
+                print(self.const[2][dir])
                 return self.const[2][dir]
             else:
+                print(self.const[3][dir])
                 return self.const[3][dir]
         else: 
             return -1
 
     def lectura(self,dir):
         val = input(">")
-        print(dir)
+        #print(dir)
         tipo = self.regresaTipo(dir)
         
         try:
@@ -174,18 +188,21 @@ class maquinavirtual(object):
             print('no se encontro la variable')
 
     def nuevoTamanoFunc(self,scope):
-        i = self.funDir[scope][0][2][0]-1
-        f = self.funDir[scope][0][2][1]-1
-        c = self.funDir[scope][0][2][2]-1
-        s = self.funDir[scope][0][2][3]-1
-        d = self.funDir[scope][0][2][4]-1
-        self.intLpointer += i #se le agrega lo necesario para empezar su contexto
-        self.floatLpointer += f
-        self.charLpointer += c
-        self.stringLpointer += s
-        self.dataframeLpointer += d
+        i = self.funDir[scope][0][2][0]
+        f = self.funDir[scope][0][2][1]
+        c = self.funDir[scope][0][2][2]
+        s = self.funDir[scope][0][2][3]
+        d = self.funDir[scope][0][2][4]
         self.memLsize.append([i,f,c,s,d])
-        #print(self.memLsize)
+        
+        print(self.memLsize)
+
+    def aplicarTamanoFunc(self):
+        self.intLpointer += self.funDir[self.currentScope][0][2][0]
+        self.floatLpointer += self.funDir[self.currentScope][0][2][1]
+        self.charLpointer += self.funDir[self.currentScope][0][2][2]
+        self.stringLpointer += self.funDir[self.currentScope][0][2][3]
+        self.dataframeLpointer += self.funDir[self.currentScope][0][2][4]
 
     def saleFuncion(self):
         self.intLpointer -= self.memLsize[-1][0]
@@ -217,27 +234,30 @@ class maquinavirtual(object):
             print('dataframe')
 
     def guardaValorL(self,dir,val):
-        print('guarda valor')
-        print(dir)
+        #print('guarda valor')
+        #print(dir)
         if dir >= 12500 and dir < 15000:#int
             dir -= 12500
             dir += self.intLpointer
-            print(dir)
+            #print(dir)
             self.memL[0][dir] = val
+            print('guarda int')
+            print(dir)
+            print(val)
         elif dir>=15000 and dir < 17500:#float
             dir -= 15000
             dir += self.floatLpointer
-            print(dir)
+            #print(dir)
             self.memL[1][dir] = val
         elif dir>=17500 and dir < 20000:#char
             dir -= 17500
             dir += self.charLpointer
-            print(dir)
+            #print(dir)
             self.memL[2][dir] = val
         elif dir>=20000 and dir < 22500:#string
             dir -= 20000
             dir += self.stringLpointer
-            print(dir)
+            #print(dir)
             self.memL[3][dir] = val
         elif dir>=22500 and dir < 25000:#dataframe
             print('dataframe')
@@ -247,7 +267,7 @@ class maquinavirtual(object):
         
         for i in self.params:
             #print('llega')
-            print(self.paramT)
+            #print(self.paramT)
             if self.paramT[self.currentScope][x] == 'int':
                 self.memL[0][self.intLpointer+x] = i
             elif self.paramT[self.currentScope][x] == 'float':
@@ -261,9 +281,9 @@ class maquinavirtual(object):
             x += 1
 
     def guardarValor(self,dir,valor):
-        print('guardar valor')
-        print(dir)
-        print(valor)
+        #print('guardar valor')
+        #print(dir)
+        #print(valor)
         if dir >= 0 and dir < 12500:#variable global
             self.funDir['global'][1][dir][1] = valor
         elif dir >= 12500 and dir < 25000:#local
