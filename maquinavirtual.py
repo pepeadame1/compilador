@@ -83,8 +83,8 @@ class maquinavirtual(object):
                 self.guardaParams()
                 #print('llega')
                 self.historialPointer.append(self.pointer)#se guarda aqui o en el gosub?
-                self.pointer = quad[3]
-                self.isJumping = True
+                self.pointer = quad[3]-1
+                #self.isJumping = True
                 print('')
             elif quad[0] == 'ENDFunc':
                 self.pointer = self.historialPointer.pop()
