@@ -10,9 +10,13 @@ var
 
 funcion int fact(int j, string k)
 var int i;
+string r;
 {
-    i = j + (p-j*2+j);
+    r = "test";
+    p = 3;
+    i = j + p-j*2+j;
     f1 = 2.0*1;
+    escribe(r);
     si(j == 1) entonces{
         lee(i);
         i = 3;
@@ -32,6 +36,7 @@ int l;
 
 principal(){
     i = 5+3;
+    o = "test";
     fact(i,o);
     lee(p);
     escribe(p);
@@ -46,7 +51,7 @@ principal(){
     }
 
     desde i = 3 hasta 10 hacer{
-        escribe(i);
+        escribe(i*2);
     }
 
     j = p*2;

@@ -19,7 +19,7 @@ class BasicParser(Parser):
     @_('catcherprograma ";" programa')
     def preprograma(self,p):
         print("fin de parser")
-        maqVirt = maquinavirtual(dir.exportFundir(),dir.exportConst(),dir.exportTemp(),qm.returnQuadruplos())
+        maqVirt = maquinavirtual(dir.exportFundir(),dir.exportConst(),dir.exportTemp(),qm.returnQuadruplos(),dir.returnParamT())
         maqVirt.correrPrograma()
         return p
 
@@ -76,8 +76,6 @@ class BasicParser(Parser):
 
     @_('tipo var3 ";"')
     def var2(self,p):
-        dir.countLocalVar()
-        dir.setQuadCounter(qm.quadCount()) 
         return p
 
     @_('varhelp2 "["  var4 arrCalc')#aqui notar que es un arreglo
@@ -172,20 +170,21 @@ class BasicParser(Parser):
     def param(self,p):
         return p
 
-    @_('tipo ID')
+    @_('tipo ID')#nodo 2 definicion de funcion
     def paramhelp(self,p):
         dir.agregarVariable(p[1],mv.addVar(dir.getCurrentType(),dir.getScope()))
-        dir.addParamT(p[0][1])
+        #dir.addParamT(p[0][1])
+        dir.addParamT(dir.getCurrentType())
         return p
 
     @_('funcshelper funcs2')
     def funcs(self,p):
         return p
 
-    @_('FUNCION tipo ID')
+    @_('FUNCION tipo ID')#nodo 1 definicion de funcion
     def funcshelper(self,p):
         dir.setscope(p[2])
-        dir.setreturn(dir.currentType)
+        dir.setreturn(dir.getCurrentType())
         dir.agregarFunc(p[2])
         return p
 
@@ -207,21 +206,27 @@ class BasicParser(Parser):
         return p
 
     @_('')
-    def countparam(self,p):
+    def countparam(self,p):#nodo 4 definicion de funcion
         dir.countParams()
         
         return p
 
-    @_('vars bloque funcs4')
+    @_('vars varcount bloque funcs4')
     def funcs3(self,p):
         return p
 
-    @_('bloque funcs4')
+    @_('varcount bloque funcs4')
     def funcs3(self,p):
+        return p
+
+    @_('')#nodo 5 y 6 definicion de funcion
+    def varcount(self,p):
+        dir.countLocalVar()
+        dir.setQuadCounter(qm.quadCount()) 
         return p
 
     @_('')
-    def funcs4(self,p):
+    def funcs4(self,p):#nodo 7 definicion de funcion
         #dir.borrarScope()###############################################################
         #dir.borrarTemp()################################################################
         qm.pushQuadruple("ENDFunc","","","")
@@ -327,7 +332,7 @@ class BasicParser(Parser):
         arg = qm.popPilaO()
         argT = qm.popPilaT()
         if dir.validaParam(argT):
-            print("llega")
+            #print("llega")
             qm.pushQuadruple("PARAMETER",dir.returnAdrFull(arg,argT),"","param"+str(dir.getParamC()))
             print("termina")
         else:

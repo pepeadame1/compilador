@@ -240,6 +240,8 @@ class fundir(object):
     def addParamT(self,paramT):
         self.paraTable[self.currentScope].append(paramT)
 
+    def returnParamT(self):
+        return self.paraTable
     #################################################
     def funcExists(self,id):
         if id in self.funDir:
@@ -342,20 +344,45 @@ class fundir(object):
         else:
             self.funDir[self.currentScope][0].append(count)
     
+    # def countLocalVar(self):
+    #     #varCount = len(self.funDir[self.currentScope][1])
+    #     if self.currentScope != "global":
+    #         lenght = len(self.paraTable[self.currentScope])
+    #         if len(self.funDir[self.currentScope][0])>2:
+    #             self.funDir[self.currentScope][0][2] = varCount-lenght
+    #         else:
+    #             self.funDir[self.currentScope][0].append(varCount-lenght)
+    #     elif self.currentScope == "global":
+    #         varCount = len(self.funDir[self.currentScope][1])
+    #         if len(self.funDir[self.currentScope][0])>2:
+    #             self.funDir[self.currentScope][0][2] = varCount
+    #         else:
+    #             self.funDir[self.currentScope][0].append(varCount)
+
     def countLocalVar(self):
-        varCount = len(self.funDir[self.currentScope][1])
-        if self.currentScope != "global":
-            lenght = len(self.paraTable[self.currentScope])
-            if len(self.funDir[self.currentScope][0])>2:
-                self.funDir[self.currentScope][0][2] = varCount-lenght
-            else:
-                self.funDir[self.currentScope][0].append(varCount-lenght)
-        elif self.currentScope == "global":
-            varCount = len(self.funDir[self.currentScope][1])
-            if len(self.funDir[self.currentScope][0])>2:
-                self.funDir[self.currentScope][0][2] = varCount
-            else:
-                self.funDir[self.currentScope][0].append(varCount)
+        int = 0
+        float = 0
+        char = 0
+        string = 0
+        dataframe = 0
+        for i in self.funDir[self.currentScope][1]:
+            if self.funDir[self.currentScope][1][i][0] == 'int':
+                int += 1
+            elif self.funDir[self.currentScope][1][i][0] == 'float':
+                float += 1
+            elif self.funDir[self.currentScope][1][i][0] == 'char':
+                char += 1
+            elif self.funDir[self.currentScope][1][i][0] == 'string':
+                string += 1
+            elif self.funDir[self.currentScope][1][i][0] == 'dataframe':
+                dataframe += 1
+
+        if len(self.funDir[self.currentScope][0])>2:
+            print('heck')
+        else:
+            #print('llega')
+            self.funDir[self.currentScope][0].append([int,float,char,string,dataframe])
+
 
     def setQuadCounter(self,count):
         if len(self.funDir[self.currentScope][0])>3:
@@ -518,7 +545,7 @@ class quadrupleManager(object):
         return self.avail
 
     def setQuadValuePrincipal(self):#encuentra el quadruplo donde empieza principal() y actualiza el goto inicial
-        print('llega')
+        #print('llega')
         self.quadruplos[0][3] = self.quadCount()
 
     def returnQuadruplos(self):
@@ -568,7 +595,7 @@ class MemoriaVirtual(object):
 
         #rangos de tipos
         #orden = [global, local, temp, const]
-        self.intRango = [2500,15000,27500,3500]
+        self.intRango = [2500,15000,27500,35000]
         self.floatRango = [5000,17500,30000,37500]
         self.charRango = [7500,20000,-1,40000]
         self.string = [10000,22500,-1,42500]
