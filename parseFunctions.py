@@ -52,9 +52,7 @@ class fundir(object):
         self.funDir[self.currentScope][1] = dict()
 
     def checarTablaScope(self):
-        if self.currentScope in self.funDir:#si hay tabla de el scope actual
-            print("ya existe esta tabla")
-        else:#si no hay tabla para el scope actual
+        if not self.currentScope in self.funDir:
             self.funDir[self.currentScope] = [[self.currentScopeReturn],dict()]
             self.paraTable[self.currentScope] = []
 
@@ -75,8 +73,6 @@ class fundir(object):
             self.funDir[self.currentScope][1][id][3][2].append([0, int(limite), 0])
             self.funDir[self.currentScope][1][id][3][1] = (int(limite) + 1) * self.funDir[self.currentScope][1][id][3][1]
             self.funDir[self.currentScope][1][id][3][0] = self.funDir[self.currentScope][1][id][3][0] + 1
-            print("SI SE PUEDE")
-            print(self.funDir[self.currentScope][1][id][3])
 
     def arrCalc(self, id):
         count = self.funDir[self.currentScope][1][id][3][0]
@@ -89,8 +85,6 @@ class fundir(object):
             m = r / (self.funDir[self.currentScope][1][id][3][2][i][1] + 1)
             self.funDir[self.currentScope][1][id][3][2][i][2] = m
             r = m
-            print("aaaaaaAAAAAAAaaaaaaa")
-            print(self.funDir[self.currentScope][1][id][3][2][i][2])
             k = k + self.funDir[self.currentScope][1][id][3][2][i][0] * m
         
             self.funDir[self.currentScope][1][id][3][0] = self.funDir[self.currentScope][1][id][3][0] + 1
@@ -99,14 +93,8 @@ class fundir(object):
 
         self.auxArrId = ""
         self.funDir[self.currentScope][1][id][2] = self.funDir[self.currentScope][1][id][2] + self.funDir[self.currentScope][1][id][3][1]
-        print("DESPUES DE CALCULO")
-        print(self.funDir[self.currentScope][1][id][2])
 
-   
     def agregarFunc(self, id):
-        #self.currentScope = ""
-        #self.currentScopeReturn = ""
-        #self.currentType = "void"
         if id in self.funDir: #ya esta la func en la tabla
             print("error: la funcion ya fue declarada previamente")
         else:
@@ -209,8 +197,6 @@ class fundir(object):
                 print("error")
 
     def returnAdrFull(self,id,tipo):#esta funcion regresa la direccion de memoria sin importar si es global,local,temporal o constante
-        #primero tratamos con local
-        print(self.currentScope)
         if self.variableExists(id):
             return self.returnAdr(id)
         elif self.isTemp(id,tipo):
@@ -344,21 +330,7 @@ class fundir(object):
         else:
             self.funDir[self.currentScope][0].append(count)
     
-    # def countLocalVar(self):
-    #     #varCount = len(self.funDir[self.currentScope][1])
-    #     if self.currentScope != "global":
-    #         lenght = len(self.paraTable[self.currentScope])
-    #         if len(self.funDir[self.currentScope][0])>2:
-    #             self.funDir[self.currentScope][0][2] = varCount-lenght
-    #         else:
-    #             self.funDir[self.currentScope][0].append(varCount-lenght)
-    #     elif self.currentScope == "global":
-    #         varCount = len(self.funDir[self.currentScope][1])
-    #         if len(self.funDir[self.currentScope][0])>2:
-    #             self.funDir[self.currentScope][0][2] = varCount
-    #         else:
-    #             self.funDir[self.currentScope][0].append(varCount)
-
+   
     def countLocalVar(self):
         int = 0
         float = 0
@@ -378,9 +350,8 @@ class fundir(object):
                 dataframe += 1
 
         if len(self.funDir[self.currentScope][0])>2:
-            print('heck')
+            print('error: el indice del arreglo esta mal')
         else:
-            #print('llega')
             self.funDir[self.currentScope][0].append([int,float,char,string,dataframe])
 
 
@@ -402,11 +373,10 @@ class fundir(object):
     def exportFundir(self):
         exitT = dict()
         for x in self.funDir:
-            #print(x)
+
             exitT[x] = [self.funDir[x][0],dict()]
             for i in self.funDir[x][1]:
                 exitT[x][1][self.returnAdr(i)] = self.funDir[x][1][i]
-        #print(exitT)
         return exitT
 
     def exportConst(self):
@@ -419,7 +389,6 @@ class fundir(object):
             exit[2][self.constTable[2][i]] = i
         for i in self.constTable[3]:#int
             exit[3][self.constTable[3][i]] = i
-        #print(exit)
         return exit
 
     def exportTemp(self):
@@ -430,12 +399,7 @@ class fundir(object):
             exit[1][self.tempTable[1][i]] = 0.0
         for i in self.tempTable[2]:#bool
             exit[2][self.tempTable[2][i]] = True
-        #print(exit)
         return exit
-
-class printTest:
-    def __init__(self):
-        print("test")
 
 class quadrupleManager(object):
     
@@ -545,7 +509,6 @@ class quadrupleManager(object):
         return self.avail
 
     def setQuadValuePrincipal(self):#encuentra el quadruplo donde empieza principal() y actualiza el goto inicial
-        #print('llega')
         self.quadruplos[0][3] = self.quadCount()
 
     def returnQuadruplos(self):
@@ -562,8 +525,6 @@ class quadrupleManager(object):
             print(i[3])
             x = x+1
         print("------------------------")
-
-        #print(json.dumps(self.quadruplos,indent=2))
 
 class MemoriaVirtual(object):
 

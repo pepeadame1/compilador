@@ -2,8 +2,6 @@ programa covid19;
 
 var 
     int i,j,p,maxVariables,maxRenglones;
-    int valor, Arreglo[10], OtroArreglo[10][5];
-    string VarCovid[100];
     string o;
     float f1;
     dataframe ash;

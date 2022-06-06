@@ -18,8 +18,8 @@ class BasicParser(Parser):
 
     @_('catcherprograma ";" programa')
     def preprograma(self,p):
-        print("fin de parser")
         maqVirt = maquinavirtual(dir.exportFundir(),dir.exportConst(),dir.exportTemp(),qm.returnQuadruplos(),dir.returnParamT())
+        dir.borrar()
         maqVirt.correrPrograma()
         return p
 
@@ -107,16 +107,11 @@ class BasicParser(Parser):
 
     @_('ID ","')
     def varhelp(self,p):
-        #print(dir.getScope())
-        #print(mv.addVar(dir.getCurrentType(),dir.getScope()))
-        #dir.agregarVariable(mv.addVar(dir.getCurrentType(),dir.getScope()))
         dir.agregarVariable(p[0],mv.addVar(dir.getCurrentType(),dir.getScope()))
         return p
 
     @_('ID')
     def varhelp(self,p):
-        #print(mv.addVar(dir.getCurrentType(),dir.getScope()))
-        #dir.agregarVariable(mv.addVar(dir.getCurrentType(),dir.getScope()))
         dir.agregarVariable(p[0],mv.addVar(dir.getCurrentType(),dir.getScope()))
         return p
 
@@ -187,14 +182,6 @@ class BasicParser(Parser):
         dir.setreturn(dir.getCurrentType())
         dir.agregarFunc(p[2])
         return p
-
-    '''
-    @_('FUNCION ID funcs2')##no recuerdo para que pusimos esto
-    def funcs(self,p):
-        dir.agregarFunc(p[1])
-        dir.print
-        return p
-    '''
 
     @_('"(" param ")" countparam funcs3')
     def funcs2(self,p):
@@ -332,9 +319,7 @@ class BasicParser(Parser):
         arg = qm.popPilaO()
         argT = qm.popPilaT()
         if dir.validaParam(argT):
-            #print("llega")
             qm.pushQuadruple("PARAMETER",dir.returnAdrFull(arg,argT),"","param"+str(dir.getParamC()))
-            print("termina")
         else:
             exit()
         return p
@@ -397,7 +382,6 @@ class BasicParser(Parser):
 
     @_('CTESTRING')
     def escritura4(self,p):#se crea el cuadruplo para escribir un string
-        #print("si encontro el string")
         if not dir.validaConst('string',p[0]):
             adr = mv.addVar('string','const')
             dir.addConst('string',p[0],adr)
@@ -550,8 +534,6 @@ class BasicParser(Parser):
             print("tipos de datos no iguales")
         else:
             exp = qm.popPilaO()
-            print("decision1--------------------")
-            print(exp)
             qm.pushQuadruple("GotoF",dir.returnAdrFull(exp,tipo),"","")
             cont = qm.quadCount()
             qm.pushPSaltos(cont-1)
@@ -612,7 +594,6 @@ class BasicParser(Parser):
 
     @_('')
     def nocondicional2(self,p):#punto 2
-        print('punto 2')
         expT = qm.popPilaT()
         if expT == 'int' or expT == 'float':
             exp = qm.popPilaO()
@@ -812,16 +793,5 @@ class BasicParser(Parser):
     @_('')
     def fin(self,p):
         print("codigo valido")
-        dir.print()
-        #dir.test()
-        qm.print()
-        dir.printParams()
-        dir.printTemp()
-        #area de tests
-        #qm.verificarTiposOp("+",("int","float"))
-        dir.printConst()
-        dir.exportConst()
-        dir.exportTemp()
-        dir.exportFundir()
-        #dir.borrar()
+        
         return p
