@@ -30,14 +30,15 @@ class BasicParser(Parser):
         dir.addConst('int',1,mv.addVar('int','const'))
         return p
 
+    @_('PRINCIPAL contextoprograma "(" ")" bloque fin')
+    def programa(self,p):
+        return p
 
     @_(' programa2 PRINCIPAL contextoprograma "(" ")" bloque fin')
     def programa(self,p):
         return p
 
-    @_(' PRINCIPAL contextoprograma "(" ")" bloque fin')
-    def programa(self,p):
-        return p
+    
 
     @_('')
     def contextoprograma(self,p):
@@ -46,6 +47,10 @@ class BasicParser(Parser):
         return p
 
     @_('vars programa3')
+    def programa2(self,p):
+        return p
+
+    @_('vars')
     def programa2(self,p):
         return p
 

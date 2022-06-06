@@ -1,0 +1,12 @@
+programa forLoops;
+var 
+    int i,j,p;
+
+principal(){
+    escribe("cuantos loops quieres?");
+    lee(i);
+
+    desde j = 0 hasta i hacer{
+        escribe(j);
+    }
+}

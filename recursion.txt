@@ -1,49 +1,18 @@
 programa covid19;
-
 var 
-    int i,j,p,maxVariables,maxRenglones;
-    int valor, Arreglo[10], OtroArreglo[10];
-    dataframe DatosCovid;
-    string VarCovid[100];
+    int i,p;
 
-funcion int fact(int j)
-var int i;
-{
-    i = j + (p-j*2+j);
-    si(j == 1) entonces{
-        regresa(j);
-    }sino{
-        regresa(j*fact(j-1));
-    }
-}
-
-funcion void inicia(int y)
+funcion int inicia(int y)
 var int x;
 {
-    x = 0;
-    mientras(x<11)haz
-    {
-        Arreglo[x] = y*x;
-        x = x+1;
+    x = 3;
+    y = y*2;
+    escribe(y);
+    si(y<100)entonces{
+        inicia(y);
     }
 }
 
 principal(){
-    lee(p);
-    j = p*2;
-    desde i=0 hasta 9 hacer{
-        Arreglo[i] = Arreglo[i] * fact(Arreglo[i]-p);
-    }
-    cargaArchivo(DatosCovid, "C://Documentos/Covid.txt", maxVariables, maxRenglones);
-    Variables(DatosCovid, VarCovid, maxVariables);
-    desde k=0 hasta MaxVariables hacer
-    {
-        valor = Media(DatosCovid, Variables[k]);
-        escribe("Media para la variable", Variables[k], valor);
-    }
-    escribe("indice de correlacion entre Variable 1 y variable 5 de la muestra", Correlaciona(DatosCovid,Variables[1]));
-    mientras(i >= 0){
-        escribe("resultado", Arreglo[i], fact(i+2)*valor);
-        i = i-1;
-    }
+    inicia(5);
 }
