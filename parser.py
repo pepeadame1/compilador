@@ -556,7 +556,6 @@ class BasicParser(Parser):
 
     @_('SI "(" expresion ")"')
     def decision1(self,p):
-
         tipo = qm.popPilaT()
         if tipo != "bool":
             print("tipos de datos no iguales")

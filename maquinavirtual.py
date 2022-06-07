@@ -73,13 +73,9 @@ class maquinavirtual(object):
                 self.pointer = self.historialPointer.pop()
                 self.saleFuncion()
             elif quad[0] == '=RET':
-                #print(self.regresaValor(quad[3]))
-                print(self.valorRegreso)
                 self.guardarValor(quad[3], self.valorRegreso)
             elif quad[0] == 'REGV':
-                print('regv')
-                print(quad[1])
-                print(self.regresaValor(quad[1]))
+                #print(self.regresaValor(quad[1]))
                 self.valorRegreso = self.regresaValor(quad[1])
             if not self.isJumping:
                 self.pointer += 1
@@ -107,7 +103,9 @@ class maquinavirtual(object):
             else:
                 return self.const[3][dir]
         else: 
+            print('no existe este valor')
             return -1
+            
 
     def lectura(self,dir):#lee input del usuario
         val = input(">")

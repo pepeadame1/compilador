@@ -525,8 +525,6 @@ class quadrupleManager(object):
 
 class MemoriaVirtual(object):
 
-
-
     def __init__(self):
         #rangos
         #global
