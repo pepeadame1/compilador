@@ -1,0 +1,23 @@
+programa covid19;
+
+var 
+    int i,k,f;
+
+funcion int fib(int j)
+var int a,b;
+{
+    si(j <= 1)entonces{
+        regresa(j);
+    }
+    a = fib(j-1);
+    b = fib(j-2);
+    f = a+b;
+    regresa(f);
+}
+
+principal(){
+    escribe("Numero de niveles de fibonacci");
+    lee(i);
+    k = fib(i);
+    escribe(k);
+}

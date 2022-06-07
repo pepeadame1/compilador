@@ -24,6 +24,8 @@ class maquinavirtual(object):
         self.charLpointer = 0
         self.stringLpointer = 0
         self.dataframeLpointer = 0
+        
+        self.valorRegreso = None
     
     def correrPrograma(self):
         indexFinal = len(self.quadruplos)
@@ -38,7 +40,6 @@ class maquinavirtual(object):
                 rightO = self.regresaValor(quad[2])
                 op = quad[0]
                 ans = eval(f'{leftO} {op} {rightO}')
-                
                 self.guardarValor(quad[3],ans)
             elif quad[0] == 'GotoF':
                 if self.regresaValor(quad[1]) == False:
@@ -71,6 +72,15 @@ class maquinavirtual(object):
             elif quad[0] == 'ENDFunc':
                 self.pointer = self.historialPointer.pop()
                 self.saleFuncion()
+            elif quad[0] == '=RET':
+                #print(self.regresaValor(quad[3]))
+                print(self.valorRegreso)
+                self.guardarValor(quad[3], self.valorRegreso)
+            elif quad[0] == 'REGV':
+                print('regv')
+                print(quad[1])
+                print(self.regresaValor(quad[1]))
+                self.valorRegreso = self.regresaValor(quad[1])
             if not self.isJumping:
                 self.pointer += 1
 

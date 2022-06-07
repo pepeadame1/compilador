@@ -22,7 +22,7 @@ class fundir(object):
         self.paramC = 0
         self.auxArrId = ""
 
-    def addProgram(self,id):
+    def addProgram(self,id):#funcion para inicializar valores
         self.programName = id
         self.funDir["global"] = [["void",0],dict()]
         self.funDir["principal"] = [["void",0],dict()]
@@ -48,33 +48,33 @@ class fundir(object):
     def borrar(self):#aqui se borra todo
         self.funDir = dict()
 
-    def borrarScope(self):
+    def borrarScope(self):#borra las variables de una funcion local
         self.funDir[self.currentScope][1] = dict()
 
-    def checarTablaScope(self):
+    def checarTablaScope(self):#verifica si existe una tabla para es contexto
         if not self.currentScope in self.funDir:
             self.funDir[self.currentScope] = [[self.currentScopeReturn],dict()]
             self.paraTable[self.currentScope] = []
 
-    def agregarVariable(self, id,adr):
+    def agregarVariable(self, id,adr):#agrega una variable al contexto actual
         if id in self.funDir[self.currentScope][1]:#ya esta el id en la tabla
-            print("error the id is already being used")
+            print("error: el id ya esta en uso")
         else:
             self.funDir[self.currentScope][1][id] = [self.currentType,"valor",adr, []]
 
-    def setArreglo(self,id):
+    def setArreglo(self,id):#inicializa la informacion de un arreglo
         self.funDir[self.currentScope][1][id][3] = [0, 1, []] # dim, r, [lim inf, lim sup, m/k]
     
-    def addLimite(self, id, limite):
+    def addLimite(self, id, limite):#agrega los limites de un arreglo
         if(int(limite) < 1):
-            print("error limite debe ser mayor a 0")
+            print("error: limite debe ser mayor a 0")
         
         else:
             self.funDir[self.currentScope][1][id][3][2].append([0, int(limite), 0])
             self.funDir[self.currentScope][1][id][3][1] = (int(limite) + 1) * self.funDir[self.currentScope][1][id][3][1]
             self.funDir[self.currentScope][1][id][3][0] = self.funDir[self.currentScope][1][id][3][0] + 1
 
-    def arrCalc(self, id):
+    def arrCalc(self, id):#calcula la informacion necesaria de un arreglo
         count = self.funDir[self.currentScope][1][id][3][0]
         self.funDir[self.currentScope][1][id][3][0] = 1
         r = self.funDir[self.currentScope][1][id][3][1]
@@ -94,20 +94,20 @@ class fundir(object):
         self.auxArrId = ""
         self.funDir[self.currentScope][1][id][2] = self.funDir[self.currentScope][1][id][2] + self.funDir[self.currentScope][1][id][3][1]
 
-    def agregarFunc(self, id):
+    def agregarFunc(self, id):#agrega una funcion a dirFun
         if id in self.funDir: #ya esta la func en la tabla
             print("error: la funcion ya fue declarada previamente")
         else:
             self.funDir[id] = [[self.currentScopeReturn], dict()]
             self.paraTable[self.currentScope] = []
 
-    def getVariableType(self,name):#primero ver en local y luego en global por presedencia
+    def getVariableType(self,name):#regresa el tipo de una variable
         if name in self.funDir[self.currentScope][1]:
             return self.funDir[self.currentScope][1][name][0]
         elif name in self.funDir["global"][1]:
             return self.funDir["global"][1][name][0]
     
-    def variableExists(self,id):
+    def variableExists(self,id):#valida la existencia de una variable
         if id in self.funDir[self.currentScope][1]:
             return True
         elif id in self.funDir["global"][1]:
@@ -115,7 +115,7 @@ class fundir(object):
         else:
             return False
 
-    def addConst(self,tipo,val,adr):
+    def addConst(self,tipo,val,adr):#agrega un valor constante
         if tipo == 'int':
             self.constTable[0][val] = adr
         elif tipo=='float':
@@ -125,7 +125,7 @@ class fundir(object):
         elif tipo=='string':
             self.constTable[3][val] = adr
 
-    def isConst(self,id,tipo):
+    def isConst(self,id,tipo):#valida si una constante existe
         if tipo == 'int':
             if id in self.constTable[0]:
                 return True
@@ -140,7 +140,7 @@ class fundir(object):
                 return True
         return False
 
-    def isTemp(self,id,tipo):
+    def isTemp(self,id,tipo):#valida si una variable es temporal
         if tipo == 'int':
             if id in self.tempTable[0]:
                 return True
@@ -152,7 +152,7 @@ class fundir(object):
                 return True
         return False
 
-    def addTemp(self,tipo,val,adr):
+    def addTemp(self,tipo,val,adr):#agrega una variable temporal
         if tipo == 'int':
             self.tempTable[0][val] = adr
         elif tipo=='float':
@@ -162,10 +162,10 @@ class fundir(object):
         else:
             print("error: se trato de guardar un temp que no es int,float o bool")
 
-    def borrarTemp(self):
+    def borrarTemp(self):#borra la tabla de variables temporales
         self.tempTable = [dict(),dict(),dict()]
     
-    def returnConst(self,id,tipo):
+    def returnConst(self,id,tipo):#regresa un valor constante
         if tipo == 'int':
             return self.constTable[0][id]
         elif tipo=='float':
@@ -177,7 +177,7 @@ class fundir(object):
         else:
             return -1
 
-    def returnTemp(self,id,tipo):
+    def returnTemp(self,id,tipo):#regresa un valor temporal
         if tipo == 'int':
             return self.tempTable[0][id]
         elif tipo=='float':
@@ -187,14 +187,14 @@ class fundir(object):
         else:
             return -1
 
-    def returnAdr(self,id):
+    def returnAdr(self,id):#regresa la direccion de memoria de una variable
         if self.variableExists(id):
             if id in self.funDir[self.currentScope][1]:
                 return self.funDir[self.currentScope][1][id][2]
             elif id in self.funDir["global"][1]:
                 return self.funDir['global'][1][id][2]
             else:
-                print("error")
+                print("error: no se encontro la direccion")
 
     def returnAdrFull(self,id,tipo):#esta funcion regresa la direccion de memoria sin importar si es global,local,temporal o constante
         if self.variableExists(id):
@@ -207,7 +207,7 @@ class fundir(object):
             return -1
 
 
-    def validaConst(self,tipo,val):
+    def validaConst(self,tipo,val):#valida si una constante existe
         if tipo == 'int':
             if val in self.constTable[0]:
                 return True
@@ -223,48 +223,46 @@ class fundir(object):
         else:
             return False
 
-    def addParamT(self,paramT):
+    def addParamT(self,paramT):#va agregando los tipos de parametros de una funcion
         self.paraTable[self.currentScope].append(paramT)
 
-    def returnParamT(self):
+    def returnParamT(self):#regresa la tabla de parametros
         return self.paraTable
     #################################################
-    def funcExists(self,id):
+    def funcExists(self,id):#verifica si una funcion existe
         if id in self.funDir:
             return True
         else:
             print("error: la funcion no ha sido declarada")
             return False
 
-    def startParamC(self):
+    def startParamC(self):#reinicia el contador de parametros
         self.paramC = 0
-        #self.paraPointer = id(self.paraTable[id][0]) ##segun yo el id regresa el espacio de memoria
+        
 
-    def sumaParamC(self):
+    def sumaParamC(self):#incrementa el contador de parametros
         self.paramC = self.paramC + 1
-        #self.paraPointer = id(self.paraTable[self.currentScope][self.paramC])
+        
     
-    def validaParam(self, argumentType):
-        if argumentType == self.paraTable[self.newScope][self.paramC]: ###no estoy seguro de cual es el currentScope
+    def validaParam(self, argumentType):#valida si una variable es del mismo tipo que la variable parametrica de una funcion
+        if argumentType == self.paraTable[self.newScope][self.paramC]: 
             return True
         else:
             print("error: el tipo de parametros esta mal")
             return False
 
-    def getParamC(self):
+    def getParamC(self):#regresa el contador de parametros
         return self.paramC
 
-    def validaSize(self):
+    def validaSize(self):#valida la cantidad de variables parametricas
         if self.paramC == len(self.paraTable[self.newScope])-1:
             return True
         else:
             print("El numero de parametros no es correcto")
             return False
-
-    ########################################################
     
-    def print(self):
-        #print(json.dumps(self.funDir,indent=2))
+    def print(self):#imprime funDir
+        
         for key, value in self.funDir.items():
             print("------------------------")
             print(key)
@@ -274,11 +272,10 @@ class fundir(object):
                 print(i,end=': ')
                 print(self.funDir[key][1][i])
 
-    def printParams(self):
+    def printParams(self):#imprime la tabla de parametros
         print(self.paraTable)
 
-    def printConst(self):
-        #print(self.constTable)
+    def printConst(self):#imprime la tabla de constantes
         print("CONST: ")
         print("----------")
         print('int: ')
@@ -299,7 +296,7 @@ class fundir(object):
             print(self.constTable[3][i])
         print("----------")
 
-    def printTemp(self):
+    def printTemp(self):#imprime la tabla de variables temporales
         print("TEMP")
         print("----------")
         print('int:')
@@ -316,14 +313,14 @@ class fundir(object):
             print(self.tempTable[2][i])
         print(print("----------"))
 
-    def countParams(self):
+    def countParams(self):#cuenta la cantidad de parametros de una funcion
         lenght = len(self.paraTable[self.currentScope])
         if len(self.funDir[self.currentScope][0])>1:
             self.funDir[self.currentScope][0][1] = lenght
         else:
             self.funDir[self.currentScope][0].append(lenght)
 
-    def setAvail(self,avail):
+    def setAvail(self,avail):#
         count = len(avail)
         if len(self.funDir[self.currentScope][0])>4:
             self.funDir[self.currentScope][0][4] = count

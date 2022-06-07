@@ -1,0 +1,9 @@
+programa covid19;
+
+var 
+    int i,k,f;
+
+
+principal(){
+    escribe(a);
+}

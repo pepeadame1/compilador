@@ -1,0 +1,14 @@
+programa covid19;
+
+var 
+    int i,k,f;
+
+
+principal(){
+    i = 1;
+    k = 100;
+    mientras(i < k) haz{
+        escribe(i);
+        i = i*2;
+    }
+}

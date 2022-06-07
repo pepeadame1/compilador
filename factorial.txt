@@ -1,0 +1,15 @@
+programa covid19;
+
+var 
+    int i,k,j;
+
+principal(){
+    escribe("Que numero quires para factorial?");
+    lee(i);
+    i = i+1;
+    j = 1;
+    desde k = 1 hasta i hacer{
+        j = j*k;
+    }
+    escribe(j);
+}

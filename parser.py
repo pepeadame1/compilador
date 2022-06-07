@@ -243,6 +243,11 @@ class BasicParser(Parser):
     def bloque2(self,p):
         return p
 
+    @_('REGRESA exp')
+    def bloque2(self,p):
+        qm.pushQuadruple('REGRESA','','',dir.returnAdrFull(p[1]))
+        qm.pushQuadruple('ENDFunc','','','')
+
     @_('asignacion')
     def estatuto(self,p):
         return p
@@ -286,6 +291,20 @@ class BasicParser(Parser):
         tipoId = dir.getVariableType(p[0])
         if qm.verificarTiposOp('=',(leftT,tipoId)):
             qm.pushQuadruple('=',dir.returnAdrFull(leftO,leftT),"",dir.returnAdr(p[0]))
+        else:
+            print("type mismatch")
+        return p
+
+    @_('ID "=" void')
+    def asignacion(self,p):
+        #leftO = qm.popPilaO()
+        #leftT = qm.popPilaT()
+        tipo = dir.getVariableType(p[0])
+        tipoF = dir.funDir[dir.newScope][0][0] 
+        #tipoId = dir.funDir[dir.currentScope][0][1]
+        if qm.verificarTiposOp('=',(tipo,tipoF)):
+            #qm.pushQuadruple()
+            qm.pushQuadruple('=RET',"","",dir.returnAdr(p[0]))
         else:
             print("type mismatch")
         return p
@@ -344,6 +363,10 @@ class BasicParser(Parser):
 
     @_('REGRESA "(" exp ")" ";"')
     def retorno(self,p):
+        o = qm.popPilaO()
+        t = qm.popPilaT()
+        qm.pushQuadruple("REGV",dir.returnAdr(o),'','')
+        qm.pushQuadruple("ENDFunc",'','','')
         return p
 
     @_('LEE "(" lectura2 ";"')
@@ -572,7 +595,7 @@ class BasicParser(Parser):
             qm.pushQuadruple("GotoF",dir.returnAdrFull(result,expT),"","")
             qm.pushPSaltos(qm.quadCount()-1)
         else:
-            print("error")
+            print("error: La expresion no es bool")
         return p
 
     @_('')
@@ -674,7 +697,7 @@ class BasicParser(Parser):
                 qm.pushPilaT(resultT)
                 qm.resultAdd()
             else:
-                print("type mismatch")
+                print("Error: tipo de datos no iguales")
         return p
 
     @_('')
@@ -695,7 +718,7 @@ class BasicParser(Parser):
                 qm.pushPilaT(resultT)
                 qm.resultAdd()
             else:
-                print("type mismatch")
+                print("Error: tipo de datos no compatibles")
         return p
 
 
