@@ -27,7 +27,7 @@ class maquinavirtual(object):
         
         self.valorRegreso = None
     
-    def correrPrograma(self):
+    def correrPrograma(self):#corre las instrucciones dadas por los cuadruplos
         indexFinal = len(self.quadruplos)
         while self.pointer < indexFinal:
             self.isJumping = False
@@ -85,7 +85,7 @@ class maquinavirtual(object):
                 self.pointer += 1
 
 
-    def regresaValor(self,dir):
+    def regresaValor(self,dir):#regresa el valor de una direccion de memoria
         if dir >= 0 and dir < 12500:#variable global
             return self.funDir['global'][1][dir][1]
         elif dir >= 12500 and dir < 25000:#local
@@ -109,10 +109,9 @@ class maquinavirtual(object):
         else: 
             return -1
 
-    def lectura(self,dir):
+    def lectura(self,dir):#lee input del usuario
         val = input(">")
         tipo = self.regresaTipo(dir)
-        
         try:
             if tipo == 'int':
                 val = int(val)
@@ -130,7 +129,7 @@ class maquinavirtual(object):
         except:
             print('error: tipo de input no congruente con tipo de variable')
     
-    def regresaTipo(self,dir):
+    def regresaTipo(self,dir):#regresa el tipo de una variable
         if dir >= 0 and dir < 12500:#variable global
             return self.funDir['global'][1][dir][0]
         elif dir >= 12500 and dir < 25000:#local
@@ -163,7 +162,7 @@ class maquinavirtual(object):
         else: 
             print('no se encontro la variable')
 
-    def nuevoTamanoFunc(self,scope):
+    def nuevoTamanoFunc(self,scope):#agrega el nuevo tamano de una funcion
         i = self.funDir[scope][0][2][0]
         f = self.funDir[scope][0][2][1]
         c = self.funDir[scope][0][2][2]
@@ -172,14 +171,14 @@ class maquinavirtual(object):
         self.memLsize.append([i,f,c,s,d])
         
 
-    def aplicarTamanoFunc(self):
+    def aplicarTamanoFunc(self):#suma el nuevo tamano de una funcion a los apuntadores de memoria
         self.intLpointer += self.funDir[self.currentScope][0][2][0]
         self.floatLpointer += self.funDir[self.currentScope][0][2][1]
         self.charLpointer += self.funDir[self.currentScope][0][2][2]
         self.stringLpointer += self.funDir[self.currentScope][0][2][3]
         self.dataframeLpointer += self.funDir[self.currentScope][0][2][4]
 
-    def saleFuncion(self):
+    def saleFuncion(self):#resta el el tamano de memoria de los apuntadores una vez que se acaba una funcion
         self.intLpointer -= self.memLsize[-1][0]
         self.floatLpointer -= self.memLsize[-1][1]
         self.charLpointer -= self.memLsize[-1][2]
@@ -187,7 +186,7 @@ class maquinavirtual(object):
         self.dataframeLpointer -= self.memLsize[-1][4]
         remove = self.memLsize.pop()
 
-    def regresaValorL(self,dir):
+    def regresaValorL(self,dir):#regresa el valor de una variable local
         if dir >= 12500 and dir < 15000:#int
             dir -= 12500
             dir += self.intLpointer
@@ -207,7 +206,7 @@ class maquinavirtual(object):
         elif dir>=22500 and dir < 25000:#dataframe
             print('dataframe')
 
-    def guardaValorL(self,dir,val):
+    def guardaValorL(self,dir,val):#guarda el valor de una variable local
         if dir >= 12500 and dir < 15000:#int
             dir -= 12500
             dir += self.intLpointer
@@ -227,7 +226,7 @@ class maquinavirtual(object):
         elif dir>=22500 and dir < 25000:#dataframe
             print('dataframe')
 
-    def guardaParams(self):
+    def guardaParams(self):#guarda los parametros de una funcion a su memoria local
         x = 0
         
         for i in self.params:
@@ -243,7 +242,7 @@ class maquinavirtual(object):
                 self.memL[4][self.dataframeLpointer+x] = i
             x += 1
 
-    def guardarValor(self,dir,valor):
+    def guardarValor(self,dir,valor):#guarda el valor de una variable
         if dir >= 0 and dir < 12500:#variable global
             self.funDir['global'][1][dir][1] = valor
         elif dir >= 12500 and dir < 25000:#local

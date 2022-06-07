@@ -320,7 +320,7 @@ class fundir(object):
         else:
             self.funDir[self.currentScope][0].append(lenght)
 
-    def setAvail(self,avail):#
+    def setAvail(self,avail):#guarda el valor de avail(temporal previo)
         count = len(avail)
         if len(self.funDir[self.currentScope][0])>4:
             self.funDir[self.currentScope][0][4] = count
@@ -328,7 +328,7 @@ class fundir(object):
             self.funDir[self.currentScope][0].append(count)
     
    
-    def countLocalVar(self):
+    def countLocalVar(self):#cuenta las variables/parametros de una funcion local
         int = 0
         float = 0
         char = 0
@@ -352,22 +352,22 @@ class fundir(object):
             self.funDir[self.currentScope][0].append([int,float,char,string,dataframe])
 
 
-    def setQuadCounter(self,count):
+    def setQuadCounter(self,count):#guarda el quadruplo donde inicia una funcion
         if len(self.funDir[self.currentScope][0])>3:
             self.funDir[self.currentScope][0][3] = count
         else:
             self.funDir[self.currentScope][0].append(count)
 
-    def getQuadCounter(self):
+    def getQuadCounter(self):#regresa el apuntador a el quadruplo donde inicia la funcion
         return self.funDir[self.newScope][0][3]
 
-    def getScope(self):
+    def getScope(self):#regresa el contexto actual
         if self.currentScope == 'global':
             return 'global'
         else:
             return 'local'
 
-    def exportFundir(self):
+    def exportFundir(self):#exporta funDir y cambia los valores a direcciones
         exitT = dict()
         for x in self.funDir:
 
@@ -376,7 +376,7 @@ class fundir(object):
                 exitT[x][1][self.returnAdr(i)] = self.funDir[x][1][i]
         return exitT
 
-    def exportConst(self):
+    def exportConst(self):#exporta la tabla de constantes
         exit = [dict(),dict(),dict(),dict()]
         for i in self.constTable[0]:#int
             exit[0][self.constTable[0][i]] = i
@@ -388,7 +388,7 @@ class fundir(object):
             exit[3][self.constTable[3][i]] = i
         return exit
 
-    def exportTemp(self):
+    def exportTemp(self):#exporta la tabla de temporales
         exit = [dict(),dict(),dict()]
         for i in self.tempTable[0]:#int
             exit[0][self.tempTable[0][i]] = 0
@@ -432,28 +432,28 @@ class quadrupleManager(object):
                 return True
         return False
 
-    def regresaTipoCuboSemantico(self,op,dupla):
+    def regresaTipoCuboSemantico(self,op,dupla):#regresa la respuesta a la interaccion entre 2 tipos
         return self.cubosemantico[op][dupla]
 
-    def pushPilaO(self,x):
+    def pushPilaO(self,x):#push a la pila de operandos
         self.pilaO.append(x)
     
-    def popPilaO(self):
+    def popPilaO(self):#pop a la pila de operandos
         if self.pilaO:
             return self.pilaO.pop()
         else:
             print("no hay valores en la pilaO")
 
-    def pushPilaT(self,x):
+    def pushPilaT(self,x):#push a la pila de tipos
         self.pilaT.append(x)
 
-    def popPilaT(self):
+    def popPilaT(self):#pop a la pila de tipos
         if self.pilaT:
             return self.pilaT.pop()
         else:
             print("no hay valores en la pilaT")
 
-    def pushPOper(self,x):
+    def pushPOper(self,x):#pop a la pila de operadores
         self.POper.append(x)
 
     def popPOper(self):
@@ -462,27 +462,27 @@ class quadrupleManager(object):
         else:
             print("no hay valores en la pila POper")
 
-    def topPOper(self):
+    def topPOper(self):#regresa el ultimo valor de la pila de operadores sin hacer pop
         if self.POper:
             return self.POper[-1]
 
-    def pushPcontrol(self,x):
+    def pushPcontrol(self,x):#push a la pila de control
         self.pilaControl.append(x)
 
-    def popPcontrol(self):
+    def popPcontrol(self):#pop a la pila de control
         if self.pilaControl:
             return self.pilaControl.pop()
 
-    def pushAvail(self,x):
+    def pushAvail(self,x):#push a avail(previamente el contador de temporales)
         self.avail.append(x)
 
-    def pushQuadruple(self,op,left,right,result):
+    def pushQuadruple(self,op,left,right,result):#push a la lista de quadruplos
         self.quadruplos.append([op,left,right,result])
 
-    def pushPSaltos(self,x):
+    def pushPSaltos(self,x):#push a la pila de saltos
         self.pSaltos.append(x)
     
-    def popPSaltos(self):
+    def popPSaltos(self):#pop a la pila de saltos
         if self.pSaltos:
             return self.pSaltos.pop()
         else:
@@ -490,28 +490,28 @@ class quadrupleManager(object):
     def resultCounter(self):
         return "t"+str(self.resultI)
 
-    def resultAdd(self):
+    def resultAdd(self):#suma 1 a el iterador de resultados(temporales)
         self.resultI = self.resultI+1
 
-    def quadCount(self):
+    def quadCount(self):#regresa el numero de quadruplos hasta el momento
         return len(self.quadruplos)
     
-    def fill(self,end,cont):
+    def fill(self,end,cont):#llena informacion de los saltos en los cuadruplos
         self.quadruplos[end][3] = cont
 
-    def popAvail(self):
+    def popAvail(self):#pop a la pila de avail(temporales)
         return self.avail.pop()
 
-    def getAvail(self):
+    def getAvail(self):#regresa avail (temporales)
         return self.avail
 
     def setQuadValuePrincipal(self):#encuentra el quadruplo donde empieza principal() y actualiza el goto inicial
         self.quadruplos[0][3] = self.quadCount()
 
-    def returnQuadruplos(self):
+    def returnQuadruplos(self):#regresa la lista de quadruplos
         return self.quadruplos
 
-    def print(self):
+    def print(self):#imprime los cuadruplos
         x = 0
         for i in self.quadruplos:
             print("------------------------")
@@ -560,7 +560,7 @@ class MemoriaVirtual(object):
         self.bool = [-1,-1,32500,-1]
 
     
-    def addVar(self,tipo,scope):
+    def addVar(self,tipo,scope):#calcula la nueva direccion para una variable
         if scope == 'global':
             if tipo == 'int':
                 self.intG += 1
@@ -614,7 +614,7 @@ class MemoriaVirtual(object):
             return -1
 
 
-    def limpiaLocal(self):
+    def limpiaLocal(self):#limpia los indices de las variables locales
         self.intL = 15000
         self.floatL = 17500
         self.charL = 20000
