@@ -1,0 +1,21 @@
+programa prueba;
+var 
+    int i,p,j,o;
+
+funcion int inicia(int y)
+{
+   o = y*2;
+   regresa(o);
+}
+
+funcion int inicia2(int k,int y)
+{
+    i = inicia(k);
+    j = i * 2;
+    regresa(j);
+}
+
+principal(){
+    p = inicia2(2,3);
+    escribe(p);
+}

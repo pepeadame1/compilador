@@ -38,8 +38,6 @@ class BasicParser(Parser):
     def programa(self,p):
         return p
 
-    
-
     @_('')
     def contextoprograma(self,p):
         dir.setscope('principal')
@@ -173,7 +171,6 @@ class BasicParser(Parser):
     @_('tipo ID')#nodo 2 definicion de funcion
     def paramhelp(self,p):
         dir.agregarVariable(p[1],mv.addVar(dir.getCurrentType(),dir.getScope()))
-        #dir.addParamT(p[0][1])
         dir.addParamT(dir.getCurrentType())
         return p
 
@@ -222,7 +219,6 @@ class BasicParser(Parser):
         #dir.borrarScope()###############################################################
         #dir.borrarTemp()################################################################
         qm.pushQuadruple("ENDFunc","","","")
-
         mv.limpiaLocal()
         return p
 
@@ -232,7 +228,6 @@ class BasicParser(Parser):
 
     @_('"{" bloque2')
     def bloque(self,p):
-        
         return p
 
     @_('estatuto "}"')
@@ -343,6 +338,10 @@ class BasicParser(Parser):
         arg = qm.popPilaO()
         argT = qm.popPilaT()
         if dir.validaParam(argT):
+            print('guarda param parser:')
+            print(arg)
+            print(argT)
+            print(dir.returnAdrFull(arg,argT))
             qm.pushQuadruple("PARAMETER",dir.returnAdrFull(arg,argT),"","param"+str(dir.getParamC()))
         else:
             exit()
@@ -819,6 +818,8 @@ class BasicParser(Parser):
 
     @_('')
     def fin(self,p):
+        qm.print()
+        #dir.print()
         print("codigo valido")
         
         return p

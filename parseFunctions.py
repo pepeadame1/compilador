@@ -198,8 +198,10 @@ class fundir(object):
 
     def returnAdrFull(self,id,tipo):#esta funcion regresa la direccion de memoria sin importar si es global,local,temporal o constante
         if self.variableExists(id):
+            print('est normal')
             return self.returnAdr(id)
         elif self.isTemp(id,tipo):
+            print('es temp')
             return self.returnTemp(id,tipo)
         elif self.isConst(id,tipo):
             return self.returnConst(id,tipo)
@@ -550,12 +552,7 @@ class MemoriaVirtual(object):
         self.stringC = 40000
 
         #rangos de tipos
-        #orden = [global, local, temp, const]
-        self.intRango = [2500,15000,27500,35000]
-        self.floatRango = [5000,17500,30000,37500]
-        self.charRango = [7500,20000,-1,40000]
-        self.string = [10000,22500,-1,42500]
-        self.bool = [-1,-1,32500,-1]
+
 
     
     def addVar(self,tipo,scope):#calcula la nueva direccion para una variable
@@ -575,8 +572,11 @@ class MemoriaVirtual(object):
         elif scope == 'local':
             if tipo == 'int':
                 self.intL += 1
+                print('WHAT THE FUCKS')
+                print(self.intL)
                 return self.intL-1
             elif tipo == 'float':
+                
                 self.floatL += 1
                 return self.floatL - 1
             elif tipo == 'char':
@@ -613,9 +613,9 @@ class MemoriaVirtual(object):
 
 
     def limpiaLocal(self):#limpia los indices de las variables locales
-        self.intL = 15000
-        self.floatL = 17500
-        self.charL = 20000
-        self.stringL = 22500
-        self.dataframeL = 25000
+        self.intL = 12500
+        self.floatL = 15000
+        self.charL = 17500
+        self.stringL = 20000
+        self.dataframeL = 22500
 

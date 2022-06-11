@@ -5,6 +5,7 @@ class maquinavirtual(object):
     def __init__(self,funDirT,constT,tempT,quadruplosT,paramT):
         self.pointer = 0
         self.historialPointer = []
+        self.eraCounter = 0
         self.currentScope = 'principal'
         self.siguienteScope = ''
         self.currentScopeReturn = ''
@@ -16,7 +17,7 @@ class maquinavirtual(object):
         self.isJumping = False
 
         self.memL = [[None]*2500,[None]*2500,[None]*2500,[None]*2500,[None]*2500]#int,float,char,string,dataframe
-        self.memLsize = []#int,float,char,string,dataframe
+        self.memLsize = [[0,0,0,0,0]]#int,float,char,string,dataframe
         self.params = []
         #local
         self.intLpointer = 0
@@ -32,6 +33,8 @@ class maquinavirtual(object):
         while self.pointer < indexFinal:
             self.isJumping = False
             quad = self.quadruplos[self.pointer]
+            #print('quad: ')
+            #print(quad)
             if quad[0] == 'GOTO':#GOTO incondicional
                 self.pointer = quad[3]
                 self.isJumping = True
@@ -61,17 +64,24 @@ class maquinavirtual(object):
                 self.siguienteScope = quad[3]
                 self.params = []
                 self.nuevoTamanoFunc(quad[3])
+                
+                    
             elif quad[0] == 'PARAMETER':
+
                 self.params.append(self.regresaValor(quad[1]))
             elif quad[0] == 'GOSUB':
                 self.currentScope = self.siguienteScope
                 self.aplicarTamanoFunc()
+                
                 self.guardaParams()
+                self.addEra()
+                
                 self.historialPointer.append(self.pointer)#se guarda aqui o en el gosub?
                 self.pointer = quad[3]-1
             elif quad[0] == 'ENDFunc':
                 self.pointer = self.historialPointer.pop()
                 self.saleFuncion()
+                self.subEra()
             elif quad[0] == '=RET':
                 self.guardarValor(quad[3], self.valorRegreso)
             elif quad[0] == 'REGV':
@@ -80,11 +90,11 @@ class maquinavirtual(object):
             if not self.isJumping:
                 self.pointer += 1
 
-
     def regresaValor(self,dir):#regresa el valor de una direccion de memoria
         if dir >= 0 and dir < 12500:#variable global
             return self.funDir['global'][1][dir][1]
         elif dir >= 12500 and dir < 25000:#local
+            #print('viene aqui')
             return self.regresaValorL(dir)
         elif dir >= 25000 and dir < 32500:#temp
             if dir >= 2500 and dir < 27500:#int
@@ -167,14 +177,19 @@ class maquinavirtual(object):
         s = self.funDir[scope][0][2][3]
         d = self.funDir[scope][0][2][4]
         self.memLsize.append([i,f,c,s,d])
-        
 
     def aplicarTamanoFunc(self):#suma el nuevo tamano de una funcion a los apuntadores de memoria
-        self.intLpointer += self.funDir[self.currentScope][0][2][0]
-        self.floatLpointer += self.funDir[self.currentScope][0][2][1]
-        self.charLpointer += self.funDir[self.currentScope][0][2][2]
-        self.stringLpointer += self.funDir[self.currentScope][0][2][3]
-        self.dataframeLpointer += self.funDir[self.currentScope][0][2][4]
+        self.intLpointer += self.memLsize[self.eraCounter][0]
+        self.floatLpointer += self.memLsize[self.eraCounter][1]
+        self.charLpointer += self.memLsize[self.eraCounter][1]
+        self.stringLpointer += self.memLsize[self.eraCounter][3]
+        self.dataframeLpointer += self.memLsize[self.eraCounter][4]
+
+    def addEra(self):
+        self.eraCounter += 1
+
+    def subEra(self):
+        self.eraCounter -= 1
 
     def saleFuncion(self):#resta el el tamano de memoria de los apuntadores una vez que se acaba una funcion
         self.intLpointer -= self.memLsize[-1][0]
@@ -226,10 +241,11 @@ class maquinavirtual(object):
 
     def guardaParams(self):#guarda los parametros de una funcion a su memoria local
         x = 0
-        
+
         for i in self.params:
             if self.paramT[self.currentScope][x] == 'int':
                 self.memL[0][self.intLpointer+x] = i
+                #print(self.memL[0][self.intLpointer+x])
             elif self.paramT[self.currentScope][x] == 'float':
                 self.memL[1][self.floatLpointer+x] = i
             elif self.paramT[self.currentScope][x] == 'char':
